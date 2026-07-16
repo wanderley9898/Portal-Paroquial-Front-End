@@ -1,0 +1,309 @@
+import { Check, Copy, LogOut, Menu, Settings } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/use-auth";
+import { ROUTES } from "../constants/routes";
+
+import { Button } from "./ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+
+export function SiteHeader() {
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
+
+  const normalizedName = (user?.name ?? "").trim();
+  const byWords = normalizedName
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+  const compactName = normalizedName.replace(/\s+/g, "").toUpperCase();
+  const userInitials = (byWords + compactName).slice(0, 2) || "US";
+
+  const handleCopyPlayerCode = async () => {
+    const code = user?.playerCode;
+    if (!code) return;
+
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch {
+      const el = document.createElement("textarea");
+      el.value = code;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+    }
+
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 1500);
+  };
+
+  const handleLogout = () => {
+    setDesktopMenuOpen(false);
+    logout();
+    navigate(ROUTES.public.home);
+  };
+
+  const handleOpenAccountSettings = () => {
+    setDesktopMenuOpen(false);
+    navigate(ROUTES.panel.accountSettings);
+  };
+
+  return (
+    <header className="sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center gap-6 px-6 py-4">
+        <Link to={ROUTES.public.home} className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-gold bg-primary text-primary-foreground">
+            <span className="font-serif text-lg">✝</span>
+          </div>
+          <span className="font-display text-xl tracking-wide text-gold">Portal Paroquial</span>
+        </Link>
+
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button type="button" variant="ghost" size="icon" className="ml-auto md:hidden">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-80 bg-background">
+            <div className="mt-8 space-y-2 font-sans text-sm">
+              <Link to={ROUTES.public.home} className="block rounded px-3 py-2 hover:bg-card">
+                Início
+              </Link>
+
+              {isAuthenticated && (
+                <>
+                  <Link
+                    to={ROUTES.panel.adminDashboard}
+                    className="block rounded px-3 py-2 hover:bg-card"
+                  >
+                    Admin
+                  </Link>
+                  <Link to={ROUTES.panel.users} className="block rounded px-3 py-2 hover:bg-card">
+                    Usuários
+                  </Link>
+                </>
+              )}
+
+              <div className="mt-4 border-t border-border/60 pt-4">
+                {isAuthenticated ? (
+                  <div className="space-y-1">
+                    <button
+                      type="button"
+                      onClick={handleOpenAccountSettings}
+                      className="flex w-full items-center gap-2 rounded px-3 py-2 text-left hover:bg-card"
+                    >
+                      <Settings className="h-4 w-4" />
+                      Configurações da conta
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-2 rounded px-3 py-2 text-left hover:bg-card"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sair
+                    </button>
+                  </div>
+                ) : (
+                  <Link to={ROUTES.public.login} className="block rounded px-3 py-2 hover:bg-card">
+                    Entrar
+                  </Link>
+                )}
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        <nav className="ml-auto hidden items-center gap-6 font-sans text-sm text-muted-foreground md:flex">
+          <Link to={ROUTES.public.home} className="hover:text-foreground">
+            Início
+          </Link>
+
+          {isAuthenticated && (
+            <>
+              <Link to={ROUTES.panel.adminDashboard} className="hover:text-foreground">
+                Admin
+              </Link>
+              <Link to={ROUTES.panel.users} className="hover:text-foreground">
+                Usuários
+              </Link>
+            </>
+          )}
+        </nav>
+        <div className="hidden md:flex md:items-center md:gap-3 md:relative">
+          {isAuthenticated && user ? (
+            <div
+              onMouseEnter={() => setDesktopMenuOpen(true)}
+              onMouseLeave={() => setDesktopMenuOpen(false)}
+            >
+              <Popover
+                open={desktopMenuOpen}
+                onOpenChange={(nextOpen) => {
+                  if (nextOpen) setDesktopMenuOpen(true);
+                }}
+              >
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 rounded px-3 py-2 font-sans text-sm text-muted-foreground hover:text-foreground hover:bg-card/50 transition-colors"
+                  >
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-gold/30 bg-card text-[11px] font-semibold uppercase text-gold">
+                      {userInitials || "US"}
+                    </span>
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent align="end" side="bottom" sideOffset={0} className="w-56 p-0">
+                  <div className="px-4 py-3 border-b border-border/60 space-y-1">
+                    <p className="font-sans text-xs uppercase tracking-wider text-gold break-all">
+                      {user.email}
+                    </p>
+                    {user?.playerCode && (
+                      <div className="flex items-center gap-2 pt-1">
+                        <div className="flex items-center gap-1 min-w-0 font-sans text-xs font-semibold uppercase tracking-wider text-gold/80">
+                          <span className="shrink-0">Cod:</span>
+
+                          <span className="truncate text-gold">{user.playerCode}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleCopyPlayerCode}
+                          aria-label={copiedCode ? "Código copiado" : "Copiar código do jogador"}
+                          title={copiedCode ? "Código copiado" : "Copiar código do jogador"}
+                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded border border-gold/25 text-gold transition-colors hover:border-gold/50 hover:bg-gold/5"
+                        >
+                          {copiedCode ? (
+                            <Check className="h-3.5 w-3.5" />
+                          ) : (
+                            <Copy className="h-3.5 w-3.5" />
+                          )}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleOpenAccountSettings}
+                    className="flex w-full items-center gap-2 px-4 py-2 font-sans text-sm text-muted-foreground hover:text-foreground hover:bg-card/50 transition-colors"
+                  >
+                    <Settings className="h-4 w-4" />
+                    Configurações da conta
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2 px-4 py-2 font-sans text-sm text-muted-foreground hover:text-foreground hover:bg-card/50 transition-colors"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sair
+                  </button>
+                </PopoverContent>
+              </Popover>
+            </div>
+          ) : (
+            <Link to={ROUTES.public.login}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-gold/40 font-sans uppercase tracking-wider text-gold hover:bg-gold hover:text-primary-foreground"
+              >
+                Entrar
+              </Button>
+            </Link>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export function SiteFooter() {
+  return (
+    <div className="mt-4">
+      <footer className=" border-t border-border/60">
+        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-12 md:grid-cols-4">
+          <div className="md:col-span-2">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-gold bg-primary text-primary-foreground">
+                <span className="font-serif text-lg">✝</span>
+              </div>
+              <span className="font-display text-lg text-gold">Portal Paroquial</span>
+            </div>
+          </div>
+          <div>
+            <p className="font-sans text-xs uppercase tracking-[0.25em] text-gold/80">Explorar</p>
+            <ul className="mt-3 space-y-2 font-sans text-sm text-muted-foreground">
+              <li>
+                <Link to={ROUTES.public.home} className="hover:text-foreground">
+                  Início
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.public.news} className="hover:text-foreground">
+                  Notícias
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.public.events} className="hover:text-foreground">
+                  Eventos
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.public.broadcasts} className="hover:text-foreground">
+                  Transmissões
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.public.radio} className="hover:text-foreground">
+                  Rádio
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-sans text-xs uppercase tracking-[0.25em] text-gold/80">Conta</p>
+            <ul className="mt-3 space-y-2 font-sans text-sm text-muted-foreground">
+              <li>
+                <Link to={ROUTES.public.login} className="hover:text-foreground">
+                  Entrar
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.public.about} className="hover:text-foreground">
+                  Sobre
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.public.contact} className="hover:text-foreground">
+                  Contato
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.public.terms} className="hover:text-foreground">
+                  Termos
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.public.privacy} className="hover:text-foreground">
+                  Privacidade
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.public.cookies} className="hover:text-foreground">
+                  Cookies
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="border-t border-border/60 px-6 py-5 text-center font-sans text-xs uppercase tracking-[0.3em] text-muted-foreground">
+          Portal Paroquial · Todos os direitos reservados
+        </div>
+      </footer>
+    </div>
+  );
+}

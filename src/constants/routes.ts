@@ -1,0 +1,31 @@
+export const ROUTES = {
+  public: {
+    home: "/",
+    login: "/login",
+    about: "/sobre",
+    news: "/noticias",
+    newsDetailPattern: "/noticias/:id",
+    events: "/eventos",
+    eventsDetailPattern: "/eventos/:id",
+    broadcasts: "/transmissoes",
+    channel: "/canal",
+    radio: "/radio",
+    documents: "/documentos",
+    contact: "/contato",
+    terms: "/termos-de-uso",
+    privacy: "/politica-de-privacidade",
+    cookies: "/politica-de-cookies",
+  },
+
+  panel: {
+    users: "/usuarios",
+    accountSettings: "/conta",
+    adminLogin: "/admin/login",
+    adminDashboard: "/admin",
+    adminNews: "/admin/noticias",
+    adminEvents: "/admin/eventos",
+    adminBroadcasts: "/admin/transmissoes",
+    adminRadio: "/admin/radio",
+    adminDocuments: "/admin/documentos",
+  },
+} as const;
