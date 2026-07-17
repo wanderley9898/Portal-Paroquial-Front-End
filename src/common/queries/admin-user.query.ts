@@ -1,8 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  adminUserService,
-  type AdminUserSearchType,
-} from "../../lib/api/admin-user.service";
+
+import { adminUserService, type AdminUserSearchType } from "@/lib/api/admin-user.service";
 
 export const queryKeysAdminUser = {
   list: "admin-user:list",

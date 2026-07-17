@@ -38,6 +38,11 @@ const AdminUsersPage = lazy(() =>
     default: module.AdminUsersPage,
   })),
 );
+const AdminNewsPage = lazy(() =>
+  import("./pages/admin/news/news").then((module) => ({
+    default: module.default,
+  })),
+);
 const AccountSettingsPage = lazy(() =>
   import("./pages/account-settings").then((module) => ({
     default: module.AccountSettingsPage,
@@ -206,7 +211,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ROUTES.panel.adminNews,
-            element: withSuspense(<AdminUsersPage />),
+            element: withSuspense(<AdminNewsPage />),
           },
           {
             path: ROUTES.panel.adminEvents,

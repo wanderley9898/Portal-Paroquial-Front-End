@@ -6,14 +6,9 @@ import { useAdminUserListQuery } from "../../common/queries/admin-user.query";
 import {
   adminUserCreateSchema,
   type AdminUserCreateFormData,
-} from "../../common/validations/admin-user/admin-user-create.schema";
+} from "../../common/validations/admin-user-create.schema";
 import { Button } from "../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Checkbox } from "../../components/ui/checkbox";
 import {
   Form,
@@ -70,9 +65,7 @@ export function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <header className="rounded-lg border border-gold/15 bg-obsidian/70 p-5 shadow-panel md:p-6">
-        <p className="text-[10px] uppercase tracking-caps text-gold/60 font-ui">
-          Super Admin
-        </p>
+        <p className="text-[10px] uppercase tracking-caps text-gold/60 font-ui">Super Admin</p>
         <h1 className="font-display text-3xl text-parchment tracking-display">
           Administração de Usuários
         </h1>
@@ -87,10 +80,7 @@ export function AdminUsersPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(submit)}
-              className="grid gap-3 md:grid-cols-2"
-            >
+            <form onSubmit={form.handleSubmit(submit)} className="grid gap-3 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="name"
@@ -112,11 +102,7 @@ export function AdminUsersPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="email@dominio.com"
-                        {...field}
-                      />
+                      <Input type="email" placeholder="email@dominio.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -144,19 +130,14 @@ export function AdminUsersPage() {
                   <FormItem>
                     <FormLabel>Perfil</FormLabel>
                     <FormControl>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
+                      <Select value={field.value} onValueChange={field.onChange}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o perfil" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="author">Autor</SelectItem>
                           <SelectItem value="reader">Leitor</SelectItem>
-                          <SelectItem value="super_admin">
-                            Super Admin
-                          </SelectItem>
+                          <SelectItem value="super_admin">Super Admin</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -173,9 +154,7 @@ export function AdminUsersPage() {
                     <FormLabel className="flex items-center gap-2">
                       <Checkbox
                         checked={field.value}
-                        onCheckedChange={(checked) =>
-                          field.onChange(Boolean(checked))
-                        }
+                        onCheckedChange={(checked) => field.onChange(Boolean(checked))}
                       />
                       Ativo
                     </FormLabel>
@@ -184,11 +163,7 @@ export function AdminUsersPage() {
                 )}
               />
 
-              <Button
-                type="submit"
-                className="md:col-span-2"
-                disabled={createMutation.isPending}
-              >
+              <Button type="submit" className="md:col-span-2" disabled={createMutation.isPending}>
                 {createMutation.isPending ? "Criando..." : "Criar usuário"}
               </Button>
             </form>

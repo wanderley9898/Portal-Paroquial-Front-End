@@ -17,10 +17,13 @@ export const ENDPOINTS = {
     updatePassword: (id: string) => `/admin/users/${id}/password`,
   },
 
-  adminSupport: {
-    tickets: "/admin/support/tickets",
-    ticketById: (id: string) => `/admin/support/tickets/${id}`,
-    ticketMessages: (id: string) => `/admin/support/tickets/${id}/messages`,
-    ticketStatus: (id: string) => `/admin/support/tickets/${id}/status`,
+  news: {
+    listPublic: "/news/public",
+    getByIdPublic: (id: string) => `/news/public/${id}`,
+    list: "/news",
+    getById: (id: string) => `/news/${id}`,
+    create: "/news",
+    update: (id: string) => `/news/${id}`,
+    delete: (id: string) => `/news/${id}`,
   },
 } as const;

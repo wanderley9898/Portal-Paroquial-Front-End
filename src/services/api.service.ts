@@ -6,6 +6,7 @@ type RequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 type ApiRequestOptions = {
   method?: RequestMethod;
   body?: unknown;
+  params?: Record<string, unknown>;
 };
 
 type UploadProgressOptions = {
@@ -71,14 +72,47 @@ function hasJsonResponse(response: Response) {
   return contentType.includes("application/json");
 }
 
+function buildUrlWithParams(path: string, params?: Record<string, unknown>) {
+  if (!params) {
+    return path;
+  }
+
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") {
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        if (item !== undefined && item !== null && item !== "") {
+          searchParams.append(key, String(item));
+        }
+      });
+      return;
+    }
+
+    searchParams.append(key, String(value));
+  });
+
+  const queryString = searchParams.toString();
+  if (!queryString) {
+    return path;
+  }
+
+  return `${path}${path.includes("?") ? "&" : "?"}${queryString}`;
+}
+
 export async function apiRequest<T>(
   path: string,
-  { method = "GET", body }: ApiRequestOptions = {},
+  { method = "GET", body, params }: ApiRequestOptions = {},
 ): Promise<T> {
   const token = getToken();
   const isFormData = body instanceof FormData;
+  const finalPath = buildUrlWithParams(path, params);
 
-  const response = await fetch(`${BASE_API_URL}${path}`, {
+  const response = await fetch(`${BASE_API_URL}${finalPath}`, {
     method,
     headers: {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
@@ -167,4 +201,19 @@ export function apiRequestWithUploadProgress<T>(
 export const api = {
   request: apiRequest,
   requestWithUploadProgress: apiRequestWithUploadProgress,
+  get<T>(path: string, options: Omit<ApiRequestOptions, "method" | "body"> = {}) {
+    return apiRequest<T>(path, { ...options, method: "GET" });
+  },
+  post<T>(path: string, body?: unknown, params?: Record<string, unknown>) {
+    return apiRequest<T>(path, { method: "POST", body, params });
+  },
+  put<T>(path: string, body?: unknown, params?: Record<string, unknown>) {
+    return apiRequest<T>(path, { method: "PUT", body, params });
+  },
+  patch<T>(path: string, body?: unknown, params?: Record<string, unknown>) {
+    return apiRequest<T>(path, { method: "PATCH", body, params });
+  },
+  delete<T>(path: string, options: Omit<ApiRequestOptions, "method" | "body"> = {}) {
+    return apiRequest<T>(path, { ...options, method: "DELETE" });
+  },
 };
