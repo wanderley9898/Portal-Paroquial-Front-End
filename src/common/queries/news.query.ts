@@ -11,6 +11,7 @@ export const queryKeysNews = {
 } as const;
 
 export const useNewsListQuery = (search: ISearchNews) => {
+  console.log("useNewsListQuery called with search:", search);
   return useQuery({
     queryKey: [queryKeysNews.list, search],
     queryFn: () => newsService.list(search),

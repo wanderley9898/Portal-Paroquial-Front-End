@@ -1,5 +1,8 @@
+import { cn } from "@/lib/utils";
 import {
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   FileText,
   LayoutDashboard,
   LogOut,
@@ -8,9 +11,12 @@ import {
   Settings,
   Users,
 } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useState } from "react";
+
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/use-auth";
 import { ROUTES } from "../constants/routes";
+import { Button } from "./ui/button";
 
 const adminNavItems = [
   {
@@ -46,8 +52,15 @@ const adminNavItems = [
 ];
 
 export function AdminSidebar() {
-  const { logout } = useAuth();
+  const [collapsed, setCollapsed] = useState(false);
+
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  if (!user || location.pathname === ROUTES.public.login) {
+    return null;
+  }
 
   const handleLogout = () => {
     logout();
@@ -55,56 +68,69 @@ export function AdminSidebar() {
   };
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-72 shrink-0 flex-col border-r border-border/60 bg-card/90 px-6 py-8 lg:flex">
-      <div className="space-y-1">
-        <p className="font-sans text-[11px] uppercase tracking-[0.35em] text-gold">Portal</p>
-        <h2 className="font-serif text-2xl text-primary">Painel paroquial</h2>
-      </div>
+    <aside
+      className={cn(
+        "relative hidden h-screen shrink-0 border-r bg-card transition-all duration-300 lg:flex lg:flex-col",
+        collapsed ? "w-20" : "w-72",
+      )}
+    >
+      <div className="flex items-center justify-between border-b p-4">
+        {!collapsed && (
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.3em] text-gold">Portal</p>
 
-      <nav className="mt-8 space-y-1">
+            <h2 className="text-xl font-semibold">Painel paroquial</h2>
+          </div>
+        )}
+
+        <Button size="icon" variant="ghost" onClick={() => setCollapsed(!collapsed)}>
+          {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+        </Button>
+      </div>
+      <nav className="flex-1 space-y-1 p-3">
         {adminNavItems.map(({ label, to, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
-              [
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-                isActive
-                  ? "bg-gold/10 text-gold"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground",
-              ].join(" ")
+              cn(
+                "flex items-center rounded-lg px-3 py-2 transition-all",
+                collapsed ? "justify-center" : "gap-3",
+                isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent",
+              )
             }
           >
-            <Icon className="h-4 w-4" />
-            <span>{label}</span>
+            <Icon className="h-5 w-5 shrink-0" />
+
+            {!collapsed && <span>{label}</span>}
           </NavLink>
         ))}
       </nav>
-
-      <div className="mt-auto space-y-2 border-t border-border/60 pt-6">
+      <div className="border-t p-3 space-y-1">
         <NavLink
           to={ROUTES.panel.accountSettings}
           className={({ isActive }) =>
-            [
-              "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-              isActive
-                ? "bg-gold/10 text-gold"
-                : "text-muted-foreground hover:bg-accent hover:text-foreground",
-            ].join(" ")
+            cn(
+              "flex items-center rounded-lg px-3 py-2",
+              collapsed ? "justify-center" : "gap-3",
+              isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent",
+            )
           }
         >
-          <Settings className="h-4 w-4" />
-          <span>Configurações</span>
+          <Settings className="h-5 w-5" />
+
+          {!collapsed && "Configurações"}
         </NavLink>
 
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          className={cn("w-full", collapsed ? "justify-center" : "justify-start gap-3")}
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
         >
-          <LogOut className="h-4 w-4" />
-          <span>Sair</span>
-        </button>
+          <LogOut className="h-5 w-5" />
+
+          {!collapsed && "Sair"}
+        </Button>
       </div>
     </aside>
   );

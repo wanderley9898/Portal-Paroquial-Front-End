@@ -1,128 +1,268 @@
-import { AutocompleteItem } from "@heroui/react";
-import { useMemo } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
-import { useEnrollmentListQuery, useLessonListQuery } from "@/common/queries";
-import { AttendanceCreate, AttendanceUpdate } from "@/common/validations";
-import { AutocompleteCustom } from "@/components/ui";
+import { NewsUpsertFormData } from "@/common/validations/news.schema";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { NewsCategoryEnum, NewsCategoryLabels } from "@/utils/enums";
 
-export const AttendanceForm = () => {
-  type AttendanceMainFormType = AttendanceCreate | AttendanceUpdate;
-
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext<AttendanceMainFormType>();
-
-  const { data: enrollmentsResponse, isLoading: isLoadingEnrollments } =
-    useEnrollmentListQuery({
-      page: 1,
-      per_page: Number.MAX_SAFE_INTEGER,
-    });
-  const enrollments = enrollmentsResponse?.items || [];
-
-  const enrollmentsOptions = useMemo(() => {
-    return (
-      enrollments?.map((item) => ({
-        label: item.student?.fullName,
-        key: item.id,
-      })) || []
-    );
-  }, [enrollments]);
-
-  const { data: lessonsResponse, isLoading: isLoadingLessons } =
-    useLessonListQuery({}, { page: 1, per_page: Number.MAX_SAFE_INTEGER });
-  const lessons = lessonsResponse?.items || [];
-
-  const lessonsOptions = useMemo(() => {
-    return (
-      lessons?.map((item) => ({
-        label: item.topic,
-        key: item.id,
-      })) || []
-    );
-  }, [lessons]);
+const categoryOptions = Object.entries(NewsCategoryLabels).map(([key, label]) => ({
+  key: key as NewsCategoryEnum,
+  label,
+}));
+export const NewsForm = () => {
+  const { control } = useFormContext<NewsUpsertFormData>();
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-4">
-        <Controller
-          control={control}
-          name="enrollmentId"
-          render={({ field: { onChange, onBlur, ref, value } }) => (
-            <AutocompleteCustom
-              ref={ref}
-              defaultItems={enrollmentsOptions}
-              errorMessage={errors.enrollmentId?.message}
-              isInvalid={!!errors.enrollmentId}
-              isLoading={isLoadingEnrollments}
-              label="Aluno"
-              placeholder="Selecione o aluno"
-              selectedKey={String(value)}
-              onBlur={onBlur}
-              onSelectionChange={(key) => {
-                const selected = key ? Number(key) : undefined;
+    <div className="space-y-8">
+      {/* ===================== Informações principais ===================== */}
 
-                onChange(selected);
-              }}
-            >
-              {(item: any) => (
-                <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
-              )}
-            </AutocompleteCustom>
+      <section className="space-y-4 rounded-lg border bg-card p-5">
+        <h3 className="text-lg font-semibold">Informações</h3>
+
+        <FormField
+          control={control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Título</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="Digite o título da notícia" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
         />
 
-        <Controller
+        <FormField
           control={control}
-          name="lessonId"
-          render={({ field: { onChange, onBlur, ref, value } }) => (
-            <AutocompleteCustom
-              ref={ref}
-              defaultItems={lessonsOptions}
-              errorMessage={errors.lessonId?.message}
-              isInvalid={!!errors.lessonId}
-              isLoading={isLoadingLessons}
-              label="Aula"
-              placeholder="Selecione a aula"
-              selectedKey={String(value)}
-              onBlur={onBlur}
-              onSelectionChange={(key) => {
-                const selected = key ? Number(key) : undefined;
-
-                onChange(selected);
-              }}
-            >
-              {(item: any) => (
-                <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
-              )}
-            </AutocompleteCustom>
+          name="subtitle"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Subtítulo</FormLabel>
+              <FormControl>
+                <Input {...field} value={field.value ?? ""} placeholder="Subtítulo da notícia" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
         />
-      </div>
 
-      <Controller
-        control={control}
-        name="type" // <-- corrigido aqui
-        render={({ field: { onChange, onBlur, ref, value } }) => (
-          <AutocompleteCustom
-            ref={ref}
-            aria-label="Presença"
-            defaultItems={presentOptions}
-            errorMessage={errors.type?.message} // <-- corrigido
-            isInvalid={!!errors.type} // <-- corrigido
-            label="Status da disciplina"
-            placeholder="Selecione o status"
-            selectedKey={String(value) || undefined}
-            onBlur={onBlur}
-            onSelectionChange={(key) => onChange(String(key))}
-          >
-            {(item: any) => (
-              <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
+        <div className="grid gap-4 md:grid-cols-2">
+          <FormField
+            control={control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Categoria</FormLabel>
+
+                <Select
+                  value={field.value}
+                  onValueChange={(value) => field.onChange(value as NewsCategoryEnum)}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                  </FormControl>
+
+                  <SelectContent>
+                    {categoryOptions.map((option) => (
+                      <SelectItem key={option.key} value={option.key}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <FormMessage />
+              </FormItem>
             )}
-          </AutocompleteCustom>
-        )}
-      />
+          />
+
+          <div className="flex items-end gap-4">
+            <FormField
+              control={control}
+              name="published"
+              render={({ field }) => (
+                <FormItem className="flex-1 rounded-lg border p-4">
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Publicada</FormLabel>
+
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="featured"
+              render={({ field }) => (
+                <FormItem className="flex-1 rounded-lg border p-4">
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Destaque</FormLabel>
+
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </div>
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        <FormField
+          control={control}
+          name="content"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Conteúdo</FormLabel>
+
+              <FormControl>
+                <Textarea {...field} rows={8} placeholder="Escreva o conteúdo da notícia..." />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </section>
+
+      {/* ===================== Imagens ===================== */}
+
+      <section className="space-y-4 rounded-lg border bg-card p-5">
+        <h3 className="text-lg font-semibold">Imagens</h3>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <FormField
+            control={control}
+            name="coverImage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Imagem de capa</FormLabel>
+
+                <FormControl>
+                  <Input {...field} value={field.value ?? ""} placeholder="https://..." />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="thumbnail"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Miniatura</FormLabel>
+
+                <FormControl>
+                  <Input {...field} value={field.value ?? ""} placeholder="https://..." />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      </section>
+
+      {/* ===================== Publicação ===================== */}
+
+      <section className="space-y-4 rounded-lg border bg-card p-5">
+        <h3 className="text-lg font-semibold">Publicação</h3>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <FormField
+            control={control}
+            name="publishedAt"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Publicar em</FormLabel>
+
+                <FormControl>
+                  <Input {...field} value={field.value ?? ""} type="datetime-local" />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="expiresAt"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Expira em</FormLabel>
+
+                <FormControl>
+                  <Input {...field} value={field.value ?? ""} type="datetime-local" />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      </section>
+
+      {/* ===================== Links ===================== */}
+
+      <section className="space-y-4 rounded-lg border bg-card p-5">
+        <h3 className="text-lg font-semibold">Links</h3>
+
+        <div className="space-y-4">
+          <FormField
+            control={control}
+            name="youtubeUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Vídeo do YouTube</FormLabel>
+
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={field.value ?? ""}
+                    placeholder="https://youtube.com/..."
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="externalUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Link externo</FormLabel>
+
+                <FormControl>
+                  <Input {...field} value={field.value ?? ""} placeholder="https://..." />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      </section>
     </div>
   );
 };

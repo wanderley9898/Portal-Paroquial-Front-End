@@ -20,7 +20,10 @@ export function AppLayout() {
           </header>
 
           <main className="flex-1 overflow-y-auto">
-            <Outlet />
+            <div className="mx-auto p-4 flex-1 h-full w-full ">
+              <Outlet />
+            </div>
+
             <SiteFooter />
           </main>
         </div>

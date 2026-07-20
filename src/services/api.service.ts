@@ -71,18 +71,13 @@ function hasJsonResponse(response: Response) {
   const contentType = response.headers.get("content-type") ?? "";
   return contentType.includes("application/json");
 }
-
 function buildUrlWithParams(path: string, params?: Record<string, unknown>) {
-  if (!params) {
-    return path;
-  }
+  if (!params) return path;
 
   const searchParams = new URLSearchParams();
 
   Object.entries(params).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === "") {
-      return;
-    }
+    if (value === undefined || value === null || value === "") return;
 
     if (Array.isArray(value)) {
       value.forEach((item) => {
@@ -90,6 +85,12 @@ function buildUrlWithParams(path: string, params?: Record<string, unknown>) {
           searchParams.append(key, String(item));
         }
       });
+
+      return;
+    }
+
+    if (typeof value === "object") {
+      searchParams.append(key, JSON.stringify(value));
       return;
     }
 
@@ -97,11 +98,8 @@ function buildUrlWithParams(path: string, params?: Record<string, unknown>) {
   });
 
   const queryString = searchParams.toString();
-  if (!queryString) {
-    return path;
-  }
 
-  return `${path}${path.includes("?") ? "&" : "?"}${queryString}`;
+  return queryString ? `${path}${path.includes("?") ? "&" : "?"}${queryString}` : path;
 }
 
 export async function apiRequest<T>(

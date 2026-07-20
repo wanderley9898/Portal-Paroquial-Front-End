@@ -20,10 +20,15 @@ export const newsUpsertSchema = z.object({
   featured: z.boolean().default(false),
 
   published: z.boolean().default(true),
+  publishedAt: z
+    .string()
+    .optional()
+    .transform((v) => (v ? new Date(v).toISOString() : undefined)),
 
-  publishedAt: z.string().optional(),
-
-  expiresAt: z.string().optional(),
+  expiresAt: z
+    .string()
+    .optional()
+    .transform((v) => (v ? new Date(v).toISOString() : undefined)),
 
   youtubeUrl: z.string().url("URL do YouTube inválida").optional().or(z.literal("")),
 

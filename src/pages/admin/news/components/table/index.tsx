@@ -1,8 +1,16 @@
 import { Pencil, Star, Trash2 } from "lucide-react";
-import { Key, useState } from "react";
+import { Key } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -11,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { News, NewsCategoryLabels } from "@/lib/types";
+import { News, NewsCategoryLabels, SearchResult } from "@/lib/types";
 
 interface TableNewsProps {
   news?: News[];
@@ -19,12 +27,15 @@ interface TableNewsProps {
   emptyContent?: string;
 
   topContent?: React.ReactNode;
-  bottomContent?: React.ReactNode;
+
+  pagination?: SearchResult<News[]>;
+
+  onPageChange?: (page: number) => void;
 
   removeActions?: boolean;
 
   onOpenEdit?: (news: News) => void;
-  remove?: (id: string) => void;
+  remove?: (news: News) => void;
 }
 
 export function TableNews({
@@ -33,12 +44,11 @@ export function TableNews({
   emptyContent = "Nenhuma notícia encontrada.",
   removeActions = false,
   topContent,
-  bottomContent,
+  pagination,
+  onPageChange,
   onOpenEdit,
   remove,
 }: TableNewsProps) {
-  const [selected, setSelected] = useState<News | null>(null);
-
   const columns = [
     {
       id: "title",
@@ -103,15 +113,7 @@ export function TableNews({
             )}
 
             {remove && (
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => {
-                  if (confirm("Deseja realmente excluir esta notícia?")) {
-                    remove(item.id);
-                  }
-                }}
-              >
+              <Button size="icon" variant="ghost" onClick={() => remove?.(item)}>
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
             )}
@@ -122,6 +124,14 @@ export function TableNews({
         return null;
     }
   };
+
+  const pages = [];
+
+  if (pagination) {
+    for (let i = 1; i <= pagination.totalPages; i++) {
+      pages.push(i);
+    }
+  }
 
   return (
     <div className="rounded-lg border bg-card">
@@ -172,7 +182,65 @@ export function TableNews({
         </TableBody>
       </Table>
 
-      {bottomContent}
+      {pagination && pagination.totalPages >= 1 && (
+        <div className="flex items-center justify-between border-t px-6 py-4">
+          <div className="text-sm text-muted-foreground">
+            Página {pagination.currentPage} de {pagination.totalPages} • {pagination.totalItems}{" "}
+            registros
+          </div>
+
+          <Pagination className="mx-0 w-auto">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+
+                    if (pagination.currentPage > 1) {
+                      onPageChange?.(pagination.currentPage - 1);
+                    }
+                  }}
+                  className={pagination.currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+
+              {pages.map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    href="#"
+                    isActive={page === pagination.currentPage}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onPageChange?.(page);
+                    }}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+
+                    if (pagination.currentPage < pagination.totalPages) {
+                      onPageChange?.(pagination.currentPage + 1);
+                    }
+                  }}
+                  className={
+                    pagination.currentPage === pagination.totalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 }

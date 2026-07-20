@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { queryKeysNews } from "@/common/queries/news.query";
 import { CreateNewsPayload, newsService, UpdateNewsPayload } from "@/lib/api/news.service";
@@ -10,13 +11,19 @@ export const useCreateNewsMutation = () => {
     mutationFn: (payload: CreateNewsPayload) => newsService.create(payload),
 
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
+      toast.success("Notícia criada com sucesso!");
+
+      await queryClient.refetchQueries({
         queryKey: [queryKeysNews.list],
       });
 
-      await queryClient.invalidateQueries({
+      await queryClient.refetchQueries({
         queryKey: [queryKeysNews.listPublic],
       });
+    },
+
+    onError: () => {
+      toast.error("Não foi possível criar a notícia.");
     },
   });
 };
@@ -29,21 +36,27 @@ export const useUpdateNewsMutation = () => {
       newsService.update(id, payload),
 
     onSuccess: async (_, variables) => {
-      await queryClient.invalidateQueries({
+      toast.success("Notícia atualizada com sucesso!");
+
+      await queryClient.refetchQueries({
         queryKey: [queryKeysNews.list],
       });
 
-      await queryClient.invalidateQueries({
+      await queryClient.refetchQueries({
         queryKey: [queryKeysNews.listPublic],
       });
 
-      await queryClient.invalidateQueries({
+      await queryClient.refetchQueries({
         queryKey: [queryKeysNews.byId, variables.id],
       });
 
-      await queryClient.invalidateQueries({
+      await queryClient.refetchQueries({
         queryKey: [queryKeysNews.byIdPublic, variables.id],
       });
+    },
+
+    onError: () => {
+      toast.error("Não foi possível atualizar a notícia.");
     },
   });
 };
@@ -55,13 +68,19 @@ export const useDeleteNewsMutation = () => {
     mutationFn: (id: string) => newsService.remove(id),
 
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
+      toast.success("Notícia excluída com sucesso!");
+
+      await queryClient.refetchQueries({
         queryKey: [queryKeysNews.list],
       });
 
-      await queryClient.invalidateQueries({
+      await queryClient.refetchQueries({
         queryKey: [queryKeysNews.listPublic],
       });
+    },
+
+    onError: () => {
+      toast.error("Não foi possível excluir a notícia.");
     },
   });
 };
