@@ -1,13 +1,33 @@
+import { useNewsPublicListQuery } from "@/common/queries/news.query";
 import { Button } from "@/components/ui/button";
 import { listItems } from "@/lib/mock/store";
-import { NewsCategoryLabels } from "@/lib/types";
-import { ArrowRight, CalendarDays, Radio, Youtube } from "lucide-react";
+import { CalendarDays, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
+import { FeaturedNewsCard } from "../news/components/featured-news-card";
+import { NewsCard } from "../news/components/news-card";
 
 export function PublicHomePage() {
-  const news = listItems("news").filter((n) => n.published);
-  const featured = news.find((n) => n.featured) ?? news[0];
-  const latest = news.filter((n) => n.id !== featured?.id).slice(0, 3);
+  const { data: newsData, isLoading } = useNewsPublicListQuery({
+    page: 1,
+    per_page: 10,
+    filter: {
+      published: true,
+      onlyVisible: true,
+    },
+  });
+  const { data: featuredNews, isLoading: featuredNewsLoading } = useNewsPublicListQuery({
+    page: 1,
+    per_page: 1,
+    filter: {
+      published: true,
+      onlyVisible: true,
+      featured: true,
+    },
+  });
+
+  const featured = featuredNews?.items[0] ?? null;
+  const latest = newsData?.items.filter((n) => n.id !== featured?.id).slice(0, 6) ?? [];
+
   const events = listItems("events")
     .filter((e) => new Date(e.date) >= new Date(Date.now() - 86400000))
     .sort((a, b) => +new Date(a.date) - +new Date(b.date))
@@ -77,72 +97,27 @@ export function PublicHomePage() {
 
       {/* Featured news */}
       {featured && (
-        <section className="mx-auto max-w-6xl px-4 py-16">
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-            {featured.coverImage && (
-              <div className="gold-frame overflow-hidden rounded">
-                <img
-                  src={featured.coverImage}
-                  alt={featured.title}
-                  className="aspect-[4/3] w-full object-cover"
-                />
-              </div>
-            )}
-            <div>
-              <p className="text-xs uppercase tracking-[0.25em] text-gold">
-                {NewsCategoryLabels[featured.category]}
-              </p>
-              <h2 className="mt-3 font-serif text-4xl text-primary">{featured.title}</h2>
-              {featured.subtitle && (
-                <p className="mt-3 font-serif text-lg text-muted-foreground">{featured.subtitle}</p>
-              )}
-              <p className="mt-5 leading-relaxed text-foreground/80">{featured.content}</p>
-              <Link
-                to={`/noticias/${featured.id}`}
-                className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80"
-              >
-                Ler notícia completa <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
+        <section className="mx-auto max-w-7xl px-4 py-16">
+          <FeaturedNewsCard news={featured} />
         </section>
       )}
 
       {/* Latest news + upcoming events */}
       <section className="border-y border-border/60 bg-parchment">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-3">
+          <div className="lg:col-span-3">
             <SectionTitle title="Últimas notícias" href="/noticias" />
-            <div className="mt-6 grid gap-6 sm:grid-cols-2">
-              {latest.map((n) => (
-                <Link
-                  key={n.id}
-                  to={`/noticias/${n.id}`}
-                  className="group block overflow-hidden rounded border border-border bg-card transition hover:border-gold"
-                >
-                  {n.coverImage && (
-                    <div className="aspect-video overflow-hidden">
-                      <img
-                        src={n.coverImage}
-                        alt={n.title}
-                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                      />
-                    </div>
-                  )}
-                  <div className="p-4">
-                    <p className="text-[10px] uppercase tracking-widest text-gold">
-                      {NewsCategoryLabels[n.category]}
-                    </p>
-                    <h3 className="mt-2 font-serif text-xl text-foreground group-hover:text-primary">
-                      {n.title}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
+
+            <div className="mt-6 grid gap-6 sm:grid-cols-3">
+              {isLoading
+                ? Array.from({ length: 6 }).map((_, index) => (
+                    <div key={index} className="h-72 animate-pulse rounded-lg bg-muted" />
+                  ))
+                : latest.map((news) => <NewsCard key={news.id} news={news} />)}
             </div>
           </div>
 
-          <div>
+          {/*} <div>
             <SectionTitle title="Próximos eventos" href="/eventos" />
             <ul className="mt-6 space-y-4">
               {events.map((e) => {
@@ -170,12 +145,12 @@ export function PublicHomePage() {
                 );
               })}
             </ul>
-          </div>
+          </div>*/}
         </div>
       </section>
 
       {/* Rádio / Canal callouts */}
-      <section className="mx-auto grid max-w-6xl gap-6 px-4 py-16 md:grid-cols-2">
+      {/*} <section className="mx-auto grid max-w-6xl gap-6 px-4 py-16 md:grid-cols-2">
         <Link
           to="/radio"
           className="group flex items-center gap-6 rounded border border-border bg-card p-6 transition hover:border-gold"
@@ -204,7 +179,7 @@ export function PublicHomePage() {
             </p>
           </div>
         </Link>
-      </section>
+      </section>*/}
     </div>
   );
 }

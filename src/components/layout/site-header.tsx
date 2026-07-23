@@ -1,12 +1,14 @@
 import { Check, Copy, LogOut, Menu, Settings } from "lucide-react";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/use-auth";
-import { ROUTES } from "../constants/routes";
 
-import { Button } from "./ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { useAuth } from "@/auth/use-auth";
+import { ROUTES } from "@/constants/routes";
+import { cn } from "@/lib/utils";
+
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function SiteHeader() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -56,7 +58,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center gap-6 px-6 py-4">
+      <div className="mx-auto flex max-w-7xl items-center gap-6 px-6 py-2">
         <Link to={ROUTES.public.home} className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full border border-gold bg-primary text-primary-foreground">
             <span className="font-serif text-lg">✝</span>
@@ -75,20 +77,6 @@ export function SiteHeader() {
               <Link to={ROUTES.public.home} className="block rounded px-3 py-2 hover:bg-card">
                 Início
               </Link>
-
-              {isAuthenticated && (
-                <>
-                  <Link
-                    to={ROUTES.panel.adminDashboard}
-                    className="block rounded px-3 py-2 hover:bg-card"
-                  >
-                    Admin
-                  </Link>
-                  <Link to={ROUTES.panel.users} className="block rounded px-3 py-2 hover:bg-card">
-                    Usuários
-                  </Link>
-                </>
-              )}
 
               <div className="mt-4 border-t border-border/60 pt-4">
                 {isAuthenticated ? (
@@ -126,9 +114,6 @@ export function SiteHeader() {
 
           {isAuthenticated && (
             <>
-              <Link to={ROUTES.panel.adminDashboard} className="hover:text-foreground">
-                Admin
-              </Link>
               <Link to={ROUTES.panel.users} className="hover:text-foreground">
                 Usuários
               </Link>
@@ -264,41 +249,6 @@ export function SiteFooter() {
               </li>
             </ul>
           </div>
-          <div>
-            <p className="font-sans text-xs uppercase tracking-[0.25em] text-gold/80">Conta</p>
-            <ul className="mt-3 space-y-2 font-sans text-sm text-muted-foreground">
-              <li>
-                <Link to={ROUTES.public.login} className="hover:text-foreground">
-                  Entrar
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.public.about} className="hover:text-foreground">
-                  Sobre
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.public.contact} className="hover:text-foreground">
-                  Contato
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.public.terms} className="hover:text-foreground">
-                  Termos
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.public.privacy} className="hover:text-foreground">
-                  Privacidade
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.public.cookies} className="hover:text-foreground">
-                  Cookies
-                </Link>
-              </li>
-            </ul>
-          </div>
         </div>
         <div className="border-t border-border/60 px-6 py-5 text-center font-sans text-xs uppercase tracking-[0.3em] text-muted-foreground">
           Portal Paroquial · Todos os direitos reservados
@@ -306,4 +256,39 @@ export function SiteFooter() {
       </footer>
     </div>
   );
+}
+
+export function PageHeader({
+  eyebrow,
+  title,
+  description,
+  className,
+}: {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn("border-b border-border/60 bg-parchment", className)}>
+      <div className="mx-auto max-w-6xl px-4 py-12 text-center">
+        <div className="gold-divider mx-auto mb-4 w-20" />
+        {eyebrow && <p className="text-xs uppercase tracking-[0.3em] text-gold">{eyebrow}</p>}
+        <h1 className="mt-3 font-serif text-4xl text-primary sm:text-5xl">{title}</h1>
+        {description && (
+          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">{description}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function PageContainer({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return <div className={cn("mx-auto max-w-6xl px-4 py-12", className)}>{children}</div>;
 }

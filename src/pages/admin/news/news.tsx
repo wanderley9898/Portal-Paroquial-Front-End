@@ -4,7 +4,7 @@ import {
   useUpdateNewsMutation,
 } from "@/common/mutations/news.mutation";
 import { useNewsListQuery } from "@/common/queries/news.query";
-import { AdminPageHeader } from "@/components/admin-header";
+import { AdminPageHeader } from "@/components/layout/admin-header";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ISearchNews, type News } from "@/lib/types";
@@ -42,7 +42,7 @@ export default function AdminNews() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-4">
       <AdminPageHeader
         title="Notícias"
         description="Crie, edite, destaque ou remova notícias do portal."

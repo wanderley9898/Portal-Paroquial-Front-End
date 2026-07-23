@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { createBrowserRouter, Link, useNavigate, useRouteError } from "react-router-dom";
 import { ProtectedRoute } from "./auth/protected-route";
-import { AppLayout } from "./components/app-layout";
+import { AppLayout } from "./components/layout/app-layout";
 import { ROUTES } from "./constants/routes";
 const PublicHomePage = lazy(() =>
   import("./pages/public-home").then((module) => ({
@@ -51,6 +51,16 @@ const AccountSettingsPage = lazy(() =>
 const AdminDashboardPage = lazy(() =>
   import("./pages/admin-users").then((module) => ({
     default: module.AdminUsersPage,
+  })),
+);
+const NewsPage = lazy(() =>
+  import("./pages/news").then((module) => ({
+    default: module.default,
+  })),
+);
+const NewsDetailPage = lazy(() =>
+  import("./pages/news/view").then((module) => ({
+    default: module.default,
   })),
 );
 
@@ -142,11 +152,11 @@ export const router = createBrowserRouter([
       },
       {
         path: ROUTES.public.news,
-        element: withSuspense(<PublicHomePage />),
+        element: withSuspense(<NewsPage />),
       },
       {
         path: ROUTES.public.newsDetailPattern,
-        element: withSuspense(<PublicHomePage />),
+        element: withSuspense(<NewsDetailPage />),
       },
       {
         path: ROUTES.public.events,

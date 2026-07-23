@@ -14,9 +14,9 @@ import {
 import { useState } from "react";
 
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/use-auth";
-import { ROUTES } from "../constants/routes";
-import { Button } from "./ui/button";
+import { useAuth } from "../../auth/use-auth";
+import { ROUTES } from "../../constants/routes";
+import { Button } from "../ui/button";
 
 const adminNavItems = [
   {
