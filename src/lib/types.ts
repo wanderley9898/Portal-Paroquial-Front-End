@@ -1,4 +1,5 @@
 import type { NewsCategoryEnum, RolesEnum } from "@/utils/enums";
+import { BroadcastStatusEnum } from "@/utils/enums/broadcast.enum";
 
 export { NewsCategoryEnum, NewsCategoryLabels, RolesEnum, RolesLabels } from "@/utils/enums";
 
@@ -71,3 +72,45 @@ export interface ISearchNewsFilter {
 }
 
 export interface ISearchNews extends Search<ISearchNewsFilter> {}
+
+// Broadcast
+export interface Broadcast extends IBaseEntityWithUUID {
+  id: string;
+
+  title: string;
+  description?: string;
+
+  youtubeUrl: string;
+  thumbnail?: string;
+
+  status: BroadcastStatusEnum;
+
+  scheduledAt: string;
+
+  featured: boolean;
+  published: boolean;
+
+  views: number;
+
+  authorName: string;
+}
+
+export interface ISearchBroadcastFilter {
+  q?: string;
+
+  status?: BroadcastStatusEnum;
+
+  featured?: boolean;
+
+  published?: boolean;
+
+  onlyVisible?: boolean;
+
+  authorId?: string;
+
+  scheduledFrom?: string;
+
+  scheduledTo?: string;
+}
+
+export interface ISearchBroadcast extends Search<ISearchBroadcastFilter> {}

@@ -26,4 +26,16 @@ export const ENDPOINTS = {
     update: (id: string) => `/news/${id}`,
     delete: (id: string) => `/news/${id}`,
   },
+
+  broadcasts: {
+    listPublic: "/broadcasts/public",
+    getByIdPublic: (id: string) => `/broadcasts/public/${id}`,
+
+    list: "/broadcasts",
+    getById: (id: string) => `/broadcasts/${id}`,
+
+    create: "/broadcasts",
+    update: (id: string) => `/broadcasts/${id}`,
+    delete: (id: string) => `/broadcasts/${id}`,
+  },
 } as const;
