@@ -18,3 +18,9 @@ export const BroadcastStatusColors: Record<BroadcastStatusEnum, string> = {
   [BroadcastStatusEnum.PAST]:
     "bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-900 dark:text-zinc-300",
 };
+
+export const BroadcastStatusVariant = {
+  [BroadcastStatusEnum.LIVE]: "destructive",
+  [BroadcastStatusEnum.UPCOMING]: "secondary",
+  [BroadcastStatusEnum.PAST]: "outline",
+} as const;

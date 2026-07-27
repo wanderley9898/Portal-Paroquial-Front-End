@@ -1,9 +1,7 @@
 import { cn } from "@/lib/utils";
 import {
-  CalendarDays,
   ChevronLeft,
   ChevronRight,
-  FileText,
   LayoutDashboard,
   LogOut,
   Newspaper,
@@ -35,19 +33,9 @@ const adminNavItems = [
     icon: Newspaper,
   },
   {
-    label: "Eventos",
-    to: ROUTES.panel.adminEvents,
-    icon: CalendarDays,
-  },
-  {
     label: "Transmissões",
     to: ROUTES.panel.adminBroadcasts,
     icon: Radio,
-  },
-  {
-    label: "Documentos",
-    to: ROUTES.panel.adminDocuments,
-    icon: FileText,
   },
 ];
 
@@ -70,8 +58,8 @@ export function AdminSidebar() {
   return (
     <aside
       className={cn(
-        "relative hidden h-screen shrink-0 border-r bg-card transition-all duration-300 lg:flex lg:flex-col",
-        collapsed ? "w-20" : "w-72",
+        "relative  h-screen shrink-0 border-r bg-card transition-all duration-300 lg:flex lg:flex-col",
+        collapsed ? "w-12" : "w-72",
       )}
     >
       <div className="flex items-center justify-between border-b p-4">
@@ -106,12 +94,12 @@ export function AdminSidebar() {
           </NavLink>
         ))}
       </nav>
-      <div className="border-t p-3 space-y-1">
+      <div className="border-t p-2 pt-4 space-y-2">
         <NavLink
           to={ROUTES.panel.accountSettings}
           className={({ isActive }) =>
             cn(
-              "flex items-center rounded-lg px-3 py-2",
+              "flex items-center rounded-lg",
               collapsed ? "justify-center" : "gap-3",
               isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent",
             )

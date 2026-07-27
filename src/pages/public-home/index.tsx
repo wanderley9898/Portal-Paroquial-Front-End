@@ -5,6 +5,7 @@ import { CalendarDays, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FeaturedNewsCard } from "../news/components/featured-news-card";
 import { NewsCard } from "../news/components/news-card";
+import { TITLE } from "@/constants/envs";
 
 export function PublicHomePage() {
   const { data: newsData, isLoading } = useNewsPublicListQuery({
@@ -48,9 +49,7 @@ export function PublicHomePage() {
         <div className="relative mx-auto max-w-6xl px-4 py-20 text-center">
           <div className="gold-divider mx-auto mb-6 w-24" />
           <p className="text-xs uppercase tracking-[0.3em] text-gold">Bem-vindo</p>
-          <h1 className="mt-4 font-serif text-5xl leading-tight sm:text-6xl">
-            Paróquia Nossa Senhora
-          </h1>
+          <h1 className="mt-4 font-serif text-5xl leading-tight sm:text-6xl">{TITLE}</h1>
           <p className="mx-auto mt-4 max-w-2xl text-primary-foreground/80">
             Uma comunidade viva de fé, oração e serviço. Acompanhe as missas, novenas e eventos da
             nossa paróquia.

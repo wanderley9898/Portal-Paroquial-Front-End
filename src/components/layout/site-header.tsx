@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { LOGO_URL, TITLE } from "@/constants/envs";
 
 export function SiteHeader() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -60,10 +61,12 @@ export function SiteHeader() {
     <header className="sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center gap-6 px-6 py-2">
         <Link to={ROUTES.public.home} className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-gold bg-primary text-primary-foreground">
-            <span className="font-serif text-lg">✝</span>
-          </div>
-          <span className="font-display text-xl tracking-wide text-gold">Portal Paroquial</span>
+          <img
+            src={LOGO_URL}
+            alt={TITLE}
+            className="h-10 w-10 rounded-full border border-gold object-cover"
+          />
+          <span className="font-display text-xl tracking-wide text-gold">{TITLE}</span>
         </Link>
 
         <Sheet>
@@ -74,10 +77,6 @@ export function SiteHeader() {
           </SheetTrigger>
           <SheetContent side="left" className="w-80 bg-background">
             <div className="mt-8 space-y-2 font-sans text-sm">
-              <Link to={ROUTES.public.home} className="block rounded px-3 py-2 hover:bg-card">
-                Início
-              </Link>
-
               <div className="mt-4 border-t border-border/60 pt-4">
                 {isAuthenticated ? (
                   <div className="space-y-1">
@@ -108,10 +107,6 @@ export function SiteHeader() {
         </Sheet>
 
         <nav className="ml-auto hidden items-center gap-6 font-sans text-sm text-muted-foreground md:flex">
-          <Link to={ROUTES.public.home} className="hover:text-foreground">
-            Início
-          </Link>
-
           {isAuthenticated && (
             <>
               <Link to={ROUTES.panel.users} className="hover:text-foreground">
@@ -208,53 +203,44 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <div className="mt-4">
-      <footer className=" border-t border-border/60">
-        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-12 md:grid-cols-4">
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-gold bg-primary text-primary-foreground">
-                <span className="font-serif text-lg">✝</span>
-              </div>
-              <span className="font-display text-lg text-gold">Portal Paroquial</span>
-            </div>
-          </div>
-          <div>
-            <p className="font-sans text-xs uppercase tracking-[0.25em] text-gold/80">Explorar</p>
-            <ul className="mt-3 space-y-2 font-sans text-sm text-muted-foreground">
-              <li>
-                <Link to={ROUTES.public.home} className="hover:text-foreground">
-                  Início
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.public.news} className="hover:text-foreground">
-                  Notícias
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.public.events} className="hover:text-foreground">
-                  Eventos
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.public.broadcasts} className="hover:text-foreground">
-                  Transmissões
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.public.radio} className="hover:text-foreground">
-                  Rádio
-                </Link>
-              </li>
-            </ul>
-          </div>
+    <footer className=" border-t border-border/60">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-6 py-4 md:flex-row">
+        <div className="flex items-center gap-3">
+          <img
+            src={LOGO_URL}
+            alt={TITLE}
+            className="h-9 w-9 rounded-full border border-gold object-cover"
+          />
+
+          <span className="font-display text-base text-gold">{TITLE}</span>
         </div>
-        <div className="border-t border-border/60 px-6 py-5 text-center font-sans text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          Portal Paroquial · Todos os direitos reservados
-        </div>
-      </footer>
-    </div>
+
+        <nav>
+          <ul className="flex flex-wrap items-center justify-center gap-5 text-sm text-muted-foreground">
+            <li>
+              <Link to={ROUTES.public.news} className="hover:text-foreground">
+                Notícias
+              </Link>
+            </li>
+
+            <li>
+              <Link to={ROUTES.public.broadcasts} className="hover:text-foreground">
+                Transmissões
+              </Link>
+            </li>
+            <li>
+              <Link to={ROUTES.public.radio} className="hover:text-foreground">
+                Rádio
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div className="border-t border-border/60 py-3 text-center text-xs text-muted-foreground">
+        © {new Date().getFullYear()} Portal Paroquial · Todos os direitos reservados
+      </div>
+    </footer>
   );
 }
 

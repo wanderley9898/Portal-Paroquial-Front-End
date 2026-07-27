@@ -3,6 +3,7 @@ import { createBrowserRouter, Link, useNavigate, useRouteError } from "react-rou
 import { ProtectedRoute } from "./auth/protected-route";
 import { AppLayout } from "./components/layout/app-layout";
 import { ROUTES } from "./constants/routes";
+
 const PublicHomePage = lazy(() =>
   import("./pages/public-home").then((module) => ({
     default: module.PublicHomePage,
@@ -13,33 +14,20 @@ const LoginPage = lazy(() =>
     default: module.LoginPage,
   })),
 );
-const ContactPage = lazy(() =>
-  import("./pages/contact").then((module) => ({
-    default: module.ContactPage,
-  })),
-);
-const TermsPage = lazy(() =>
-  import("./pages/legal/terms").then((module) => ({
-    default: module.TermsPage,
-  })),
-);
-const PrivacyPage = lazy(() =>
-  import("./pages/legal/privacy").then((module) => ({
-    default: module.PrivacyPage,
-  })),
-);
-const CookiesPage = lazy(() =>
-  import("./pages/legal/cookies").then((module) => ({
-    default: module.CookiesPage,
-  })),
-);
+
 const AdminUsersPage = lazy(() =>
-  import("./pages/admin-users").then((module) => ({
+  import("./pages/admin/users").then((module) => ({
     default: module.AdminUsersPage,
   })),
 );
 const AdminNewsPage = lazy(() =>
   import("./pages/admin/news/news").then((module) => ({
+    default: module.default,
+  })),
+);
+
+const AdminBroadcastsPage = lazy(() =>
+  import("./pages/admin/broadcasts").then((module) => ({
     default: module.default,
   })),
 );
@@ -49,7 +37,7 @@ const AccountSettingsPage = lazy(() =>
   })),
 );
 const AdminDashboardPage = lazy(() =>
-  import("./pages/admin-users").then((module) => ({
+  import("./pages/admin/users").then((module) => ({
     default: module.AdminUsersPage,
   })),
 );
@@ -60,6 +48,12 @@ const NewsPage = lazy(() =>
 );
 const NewsDetailPage = lazy(() =>
   import("./pages/news/view").then((module) => ({
+    default: module.default,
+  })),
+);
+
+const BroadcastsPage = lazy(() =>
+  import("./pages/broadcasts").then((module) => ({
     default: module.default,
   })),
 );
@@ -168,7 +162,7 @@ export const router = createBrowserRouter([
       },
       {
         path: ROUTES.public.broadcasts,
-        element: withSuspense(<PublicHomePage />),
+        element: withSuspense(<BroadcastsPage />),
       },
       {
         path: ROUTES.public.channel,
@@ -182,22 +176,7 @@ export const router = createBrowserRouter([
         path: ROUTES.public.documents,
         element: withSuspense(<PublicHomePage />),
       },
-      {
-        path: ROUTES.public.contact,
-        element: withSuspense(<ContactPage />),
-      },
-      {
-        path: ROUTES.public.terms,
-        element: withSuspense(<TermsPage />),
-      },
-      {
-        path: ROUTES.public.privacy,
-        element: withSuspense(<PrivacyPage />),
-      },
-      {
-        path: ROUTES.public.cookies,
-        element: withSuspense(<CookiesPage />),
-      },
+
       {
         element: <ProtectedRoute />,
         children: [
@@ -229,7 +208,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ROUTES.panel.adminBroadcasts,
-            element: withSuspense(<AdminUsersPage />),
+            element: withSuspense(<AdminBroadcastsPage />),
           },
           {
             path: ROUTES.panel.adminRadio,

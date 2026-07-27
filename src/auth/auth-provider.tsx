@@ -1,6 +1,7 @@
 import {
   createContext,
   useCallback,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -31,23 +32,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => getToken());
   const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
 
+  const logout = useCallback(() => {
+    clearSession();
+    setToken(null);
+    setUser(null);
+  }, []);
+
   const persistAuth = useCallback((accessToken: string, authUser: AuthUser) => {
     saveSession(accessToken, authUser);
     setToken(accessToken);
     setUser(authUser);
-
-    // Refresha dados do usuário após autenticação para garantir campos derivados.
-    setTimeout(() => {
-      authService
-        .me()
-        .then((updatedUser) => {
-          saveSession(accessToken, updatedUser);
-          setUser(updatedUser);
-        })
-        .catch(() => {
-          // Continua com os dados já salvos se falhar.
-        });
-    }, 100);
   }, []);
 
   const refreshUser = useCallback(async () => {
@@ -61,9 +55,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return updatedUser;
     } catch {
+      logout();
       return null;
     }
-  }, [token]);
+  }, [logout, token]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    let isActive = true;
+
+    authService
+      .me()
+      .then((updatedUser) => {
+        if (!isActive) return;
+
+        setUser(updatedUser);
+        saveSession(token, updatedUser);
+      })
+      .catch(() => {
+        if (!isActive) return;
+
+        logout();
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [logout, token]);
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -92,12 +111,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     [persistAuth],
   );
-
-  const logout = useCallback(() => {
-    clearSession();
-    setToken(null);
-    setUser(null);
-  }, []);
 
   const value = useMemo(
     () => ({
