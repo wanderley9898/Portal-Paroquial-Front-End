@@ -162,11 +162,23 @@ export function SiteHeader() {
           </SheetContent>
         </Sheet>
 
-        <nav className="ml-auto hidden items-center gap-6 font-sans text-sm text-muted-foreground md:flex">
+        <nav className="ml-auto hidden items-center gap-2 font-sans text-sm text-muted-foreground md:flex">
           {isAuthenticated && (
             <>
-              <Link to={ROUTES.panel.users} className="hover:text-foreground">
-                Usuários
+              <Link
+                to={ROUTES.public.news}
+                className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
+              >
+                <Newspaper className="h-4 w-4" />
+                Notícias
+              </Link>
+
+              <Link
+                to={ROUTES.public.broadcasts}
+                className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
+              >
+                <Radio className="h-4 w-4" />
+                Transmissões
               </Link>
             </>
           )}

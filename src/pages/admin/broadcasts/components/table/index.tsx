@@ -67,10 +67,6 @@ export function TableBroadcast({
       id: "scheduledAt",
       label: "Agendada",
     },
-    {
-      id: "views",
-      label: "Visualizações",
-    },
   ];
 
   if (!removeActions) {

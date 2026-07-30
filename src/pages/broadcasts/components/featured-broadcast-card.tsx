@@ -17,6 +17,9 @@ export function FeaturedBroadcastCard({ broadcast }: FeaturedBroadcastCardProps)
     day: "numeric",
     month: "long",
     year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
   });
 
   return (
