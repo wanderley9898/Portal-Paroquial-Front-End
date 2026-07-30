@@ -1,4 +1,4 @@
-import { Check, Copy, LogOut, Menu, Settings } from "lucide-react";
+import { LayoutDashboard, LogOut, Menu, Newspaper, Radio, Settings, Users } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -15,45 +15,31 @@ export function SiteHeader() {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
-  const [copiedCode, setCopiedCode] = useState(false);
-
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const normalizedName = (user?.name ?? "").trim();
   const byWords = normalizedName
     .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
+    .map((part: string) => part[0]?.toUpperCase() ?? "")
     .join("");
   const compactName = normalizedName.replace(/\s+/g, "").toUpperCase();
   const userInitials = (byWords + compactName).slice(0, 2) || "US";
 
-  const handleCopyPlayerCode = async () => {
-    const code = user?.playerCode;
-    if (!code) return;
-
-    try {
-      await navigator.clipboard.writeText(code);
-    } catch {
-      const el = document.createElement("textarea");
-      el.value = code;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand("copy");
-      document.body.removeChild(el);
-    }
-
-    setCopiedCode(true);
-    setTimeout(() => setCopiedCode(false), 1500);
+  const handleMobileNavigate = () => {
+    setMobileMenuOpen(false);
   };
 
   const handleLogout = () => {
     setDesktopMenuOpen(false);
+    setMobileMenuOpen(false);
     logout();
     navigate(ROUTES.public.home);
   };
 
   const handleOpenAccountSettings = () => {
     setDesktopMenuOpen(false);
+    setMobileMenuOpen(false);
     navigate(ROUTES.panel.accountSettings);
   };
 
@@ -69,7 +55,7 @@ export function SiteHeader() {
           <span className="font-display text-xl tracking-wide text-gold">{TITLE}</span>
         </Link>
 
-        <Sheet>
+        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
           <SheetTrigger asChild>
             <Button type="button" variant="ghost" size="icon" className="ml-auto md:hidden">
               <Menu className="h-5 w-5" />
@@ -77,6 +63,74 @@ export function SiteHeader() {
           </SheetTrigger>
           <SheetContent side="left" className="w-80 bg-background">
             <div className="mt-8 space-y-2 font-sans text-sm">
+              {isAuthenticated && (
+                <>
+                  <p className="px-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                    Painel Administrativo
+                  </p>
+
+                  <Link
+                    to={ROUTES.panel.adminDashboard}
+                    onClick={handleMobileNavigate}
+                    className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    Dashboard
+                  </Link>
+
+                  <Link
+                    to={ROUTES.panel.users}
+                    onClick={handleMobileNavigate}
+                    className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
+                  >
+                    <Users className="h-4 w-4" />
+                    Usuários
+                  </Link>
+
+                  <Link
+                    to={ROUTES.panel.adminNews}
+                    onClick={handleMobileNavigate}
+                    className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
+                  >
+                    <Newspaper className="h-4 w-4" />
+                    Notícias
+                  </Link>
+
+                  <Link
+                    to={ROUTES.panel.adminBroadcasts}
+                    onClick={handleMobileNavigate}
+                    className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
+                  >
+                    <Radio className="h-4 w-4" />
+                    Transmissões
+                  </Link>
+                </>
+              )}
+
+              <div className="my-4 border-t border-border" />
+
+              <p className="px-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                Área Pública
+              </p>
+
+              <Link
+                to={ROUTES.public.news}
+                onClick={handleMobileNavigate}
+                className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
+              >
+                <Newspaper className="h-4 w-4" />
+                Notícias
+              </Link>
+
+              <Link
+                to={ROUTES.public.broadcasts}
+                onClick={handleMobileNavigate}
+                className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
+              >
+                <Radio className="h-4 w-4" />
+                Transmissões
+              </Link>
+
               <div className="mt-4 border-t border-border/60 pt-4">
                 {isAuthenticated ? (
                   <div className="space-y-1">
@@ -88,7 +142,9 @@ export function SiteHeader() {
                       <Settings className="h-4 w-4" />
                       Configurações da conta
                     </button>
+
                     <button
+                      type="button"
                       onClick={handleLogout}
                       className="flex w-full items-center gap-2 rounded px-3 py-2 text-left hover:bg-card"
                     >
@@ -142,28 +198,6 @@ export function SiteHeader() {
                     <p className="font-sans text-xs uppercase tracking-wider text-gold break-all">
                       {user.email}
                     </p>
-                    {user?.playerCode && (
-                      <div className="flex items-center gap-2 pt-1">
-                        <div className="flex items-center gap-1 min-w-0 font-sans text-xs font-semibold uppercase tracking-wider text-gold/80">
-                          <span className="shrink-0">Cod:</span>
-
-                          <span className="truncate text-gold">{user.playerCode}</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleCopyPlayerCode}
-                          aria-label={copiedCode ? "Código copiado" : "Copiar código do jogador"}
-                          title={copiedCode ? "Código copiado" : "Copiar código do jogador"}
-                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded border border-gold/25 text-gold transition-colors hover:border-gold/50 hover:bg-gold/5"
-                        >
-                          {copiedCode ? (
-                            <Check className="h-3.5 w-3.5" />
-                          ) : (
-                            <Copy className="h-3.5 w-3.5" />
-                          )}
-                        </button>
-                      </div>
-                    )}
                   </div>
                   <button
                     type="button"
@@ -203,8 +237,8 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className=" border-t border-border/60">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-6 py-4 md:flex-row">
+    <footer className="border-t border-border/60">
+      <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-2 md:flex-row md:items-center">
         <div className="flex items-center gap-3">
           <img
             src={LOGO_URL}
@@ -215,8 +249,8 @@ export function SiteFooter() {
           <span className="font-display text-base text-gold">{TITLE}</span>
         </div>
 
-        <nav>
-          <ul className="flex flex-wrap items-center justify-center gap-5 text-sm text-muted-foreground">
+        <nav className="md:ml-auto">
+          <ul className="flex flex-wrap items-end justify-end gap-5 text-sm text-muted-foreground md:justify-end">
             <li>
               <Link to={ROUTES.public.news} className="hover:text-foreground">
                 Notícias
@@ -226,11 +260,6 @@ export function SiteFooter() {
             <li>
               <Link to={ROUTES.public.broadcasts} className="hover:text-foreground">
                 Transmissões
-              </Link>
-            </li>
-            <li>
-              <Link to={ROUTES.public.radio} className="hover:text-foreground">
-                Rádio
               </Link>
             </li>
           </ul>

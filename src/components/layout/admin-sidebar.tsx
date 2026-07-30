@@ -58,8 +58,8 @@ export function AdminSidebar() {
   return (
     <aside
       className={cn(
-        "relative  h-screen shrink-0 border-r bg-card transition-all duration-300 lg:flex lg:flex-col",
-        collapsed ? "w-12" : "w-72",
+        "relative hidden h-screen shrink-0 border-r bg-card transition-all duration-300 lg:flex lg:flex-col",
+        collapsed ? "lg:w-16" : "lg:w-72",
       )}
     >
       <div className="flex items-center justify-between border-b p-4">

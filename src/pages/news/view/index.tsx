@@ -37,48 +37,74 @@ export default function NewsDetailPage() {
 
   return (
     <article>
-      {news.coverImage && (
-        <div className="relative h-72 md:h-96 overflow-hidden">
-          <img src={news.coverImage} alt={news.title} className="h-full w-full object-cover" />
+      <section className="relative h-105 overflow-hidden md:h-140">
+        {news.coverImage ? (
+          <img
+            src={news.coverImage}
+            alt={news.title}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-linear-to-br from-primary via-primary/80 to-background" />
+        )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-        </div>
-      )}
+        {/* Escurece a imagem */}
+        <div className="absolute inset-0 bg-black/40" />
+
+        {/* Gradiente para melhorar contraste */}
+        <div className="absolute inset-0 bg-linear-to-t from-background via-background/40 to-black/20" />
+
+        {/* Gradiente superior para botão */}
+        <div className="absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-transparent" />
+
+        <PageContainer className="relative flex h-full max-w-4xl flex-col justify-between py-6">
+          <div>
+            <Link
+              to="/noticias"
+              className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition hover:bg-white/20"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Todas as notícias
+            </Link>
+          </div>
+
+          <div className="pb-6">
+            <div className="mb-4 flex flex-wrap items-center gap-3">
+              <Badge className="border-0 bg-primary text-primary-foreground">
+                {NewsCategoryLabels[news.category]}
+              </Badge>
+
+              {news.publishedAt && (
+                <span className="text-sm text-white/90">
+                  {new Date(news.publishedAt).toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>
+              )}
+
+              <span className="flex items-center gap-1 text-sm text-white/90">
+                <Eye className="h-4 w-4" />
+                {news.views}
+              </span>
+            </div>
+
+            <h1 className="max-w-3xl text-4xl font-bold leading-tight text-white drop-shadow-[0_3px_12px_rgba(0,0,0,.9)] md:text-6xl">
+              {news.title}
+            </h1>
+
+            {news.subtitle && (
+              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,.9)] md:text-xl">
+                {news.subtitle}
+              </p>
+            )}
+          </div>
+        </PageContainer>
+      </section>
+      <div className="gold-divider w-56" />
 
       <PageContainer className="max-w-4xl py-10">
-        <Link
-          to="/noticias"
-          className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Todas as notícias
-        </Link>
-
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <Badge>{NewsCategoryLabels[news.category]}</Badge>
-
-          {news.publishedAt && (
-            <span className="text-sm text-muted-foreground">
-              {new Date(news.publishedAt).toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              })}
-            </span>
-          )}
-
-          <span className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Eye className="h-4 w-4" />
-            {news.views}
-          </span>
-        </div>
-
-        <h1 className="mt-5 font-serif text-4xl md:text-5xl text-primary">{news.title}</h1>
-
-        {news.subtitle && <p className="mt-4 text-xl text-muted-foreground">{news.subtitle}</p>}
-
-        <div className="gold-divider my-8 w-24" />
-
         <div className="prose prose-lg max-w-none whitespace-pre-line">{news.content}</div>
 
         {news.authorName && (
