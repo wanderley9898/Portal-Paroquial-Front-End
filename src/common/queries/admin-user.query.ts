@@ -18,3 +18,11 @@ export const useAdminUserListQuery = (params: AdminUserSearchType) => {
     refetchOnWindowFocus: false,
   });
 };
+
+export const useAdminUserByIdQuery = (id: string) => {
+  return useQuery({
+    queryKey: [queryKeysAdminUser.list, id],
+    queryFn: () => adminUserService.getById(id),
+    refetchOnWindowFocus: false,
+  });
+};

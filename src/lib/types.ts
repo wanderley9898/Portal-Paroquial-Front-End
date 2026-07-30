@@ -25,13 +25,15 @@ export interface SearchResult<T> {
 }
 
 // Users
-export interface AdminUser {
+export interface AdminUser extends IBaseEntityWithUUID {
   id: string;
   name: string;
   email: string;
   role: RolesEnum;
-  createdAt: string;
+  isActive: boolean;
 }
+
+export interface AuthUser extends AdminUser {}
 
 // News
 export interface News extends IBaseEntityWithUUID {

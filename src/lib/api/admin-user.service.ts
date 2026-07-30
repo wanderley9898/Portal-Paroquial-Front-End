@@ -1,14 +1,9 @@
 import type { SearchResponse } from "../../auth/types";
 import { ENDPOINTS } from "../../constants/endpoints";
 import { apiRequest } from "../../services/api.service";
+import { AdminUser } from "../types";
 
-export type AdminUserType = {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  isActive: boolean;
-};
+export type AdminUserType = AdminUser;
 
 export type AdminUserSearchType = {
   page?: number;
@@ -23,6 +18,10 @@ export type CreateAdminUserPayload = {
   isActive: boolean;
 };
 
+export type UpdateAdminUserPayload = Omit<CreateAdminUserPayload, "password"> & {
+  password?: string;
+};
+
 export const adminUserService = {
   list: ({ page = 1, per_page = 10 }: AdminUserSearchType) =>
     apiRequest<SearchResponse<AdminUserType[]>>(
@@ -34,4 +33,12 @@ export const adminUserService = {
       method: "POST",
       body: payload,
     }),
+
+  update: (id: string, payload: UpdateAdminUserPayload) =>
+    apiRequest<AdminUserType>(ENDPOINTS.adminUsers.byId(id), {
+      method: "PUT",
+      body: payload,
+    }),
+
+  getById: (id: string) => apiRequest<AdminUserType>(ENDPOINTS.adminUsers.byId(id)),
 };

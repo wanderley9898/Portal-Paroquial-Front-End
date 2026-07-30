@@ -1,207 +1,160 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useAuth } from "../../auth/use-auth";
-import { useCreateAdminUserMutation } from "../../common/mutations/admin-user.mutation";
-import { useAdminUserListQuery } from "../../common/queries/admin-user.query";
-import {
-  adminUserCreateSchema,
-  type AdminUserCreateFormData,
-} from "../../common/validations/admin-user-create.schema";
-import { Button } from "../../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Checkbox } from "../../components/ui/checkbox";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../../components/ui/form";
-import { Input } from "../../components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../components/ui/table";
+import { Plus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
-export function AdminUsersPage() {
-  const { token } = useAuth();
-  const form = useForm<AdminUserCreateFormData>({
-    resolver: zodResolver(adminUserCreateSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      role: "author",
-      isActive: true,
-    },
+import {
+  useCreateAdminUserMutation,
+  useUpdateAdminUserMutation,
+} from "@/common/mutations/admin-user.mutation";
+import { useAdminUserListQuery } from "@/common/queries/admin-user.query";
+import { AdminPageHeader } from "@/components/layout/admin-header";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { AdminUserSearchType } from "@/lib/api/admin-user.service";
+
+import { AdminUserUpsertModal } from "./components/modals/upsert";
+
+import { AdminUser } from "@/lib/types";
+import { TableAdminUser } from "./components/table";
+
+export default function AdminUsersPage() {
+  const [filters, setFilters] = useState<AdminUserSearchType>({
+    page: 1,
+    per_page: 20,
   });
 
-  const { data, isLoading } = useAdminUserListQuery({ per_page: 100 });
-  const createMutation = useCreateAdminUserMutation();
+  const { data, isLoading, isError } = useAdminUserListQuery(filters);
 
-  const submit = async (values: AdminUserCreateFormData) => {
-    await createMutation.mutateAsync(values);
-    form.reset({
-      name: "",
-      email: "",
-      password: "",
-      role: "author",
-      isActive: true,
-    });
+  const createMutation = useCreateAdminUserMutation();
+  const updateMutation = useUpdateAdminUserMutation();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);
+
+  const items = data?.items ?? [];
+
+  const handleOpenDelete = (item: AdminUser) => {
+    setUserToDelete(item);
+  };
+
+  const handleDelete = () => {
+    if (!userToDelete) return;
+
+    // implementar quando criar a mutation de delete
+    // deleteMutation.mutate(userToDelete.id)
+
+    setUserToDelete(null);
   };
 
   return (
-    <div className="space-y-6">
-      <header className="rounded-lg border border-gold/15 bg-obsidian/70 p-5 shadow-panel md:p-6">
-        <p className="text-[10px] uppercase tracking-caps text-gold/60 font-ui">Super Admin</p>
-        <h1 className="font-display text-3xl text-parchment tracking-display">
-          Administração de Usuários
-        </h1>
-        <p className="mt-1 text-sm text-quill font-ui">
-          Gerencie contas de autores, leitores e administradores.
-        </p>
-      </header>
+    <div className="space-y-4 p-4">
+      <AdminPageHeader
+        title="Administradores"
+        description="Gerencie os usuários administrativos do sistema."
+        actions={
+          <Button
+            onClick={() => {
+              setSelectedUserId(null);
+              setModalOpen(true);
+            }}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Novo administrador
+          </Button>
+        }
+      />
 
-      <Card className="border-gold/15 bg-obsidian/70 shadow-panel">
-        <CardHeader>
-          <CardTitle>Criar usuário</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(submit)} className="grid gap-3 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Nome" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      <div>
+        {isLoading ? (
+          <div className="p-4 text-sm text-muted-foreground">Carregando administradores...</div>
+        ) : isError ? (
+          <div className="p-4 text-sm text-destructive">
+            Não foi possível carregar os administradores.
+          </div>
+        ) : (
+          <TableAdminUser
+            adminUsers={items}
+            loading={isLoading}
+            pagination={data}
+            onPageChange={(page) =>
+              setFilters((prev) => ({
+                ...prev,
+                page,
+              }))
+            }
+            onOpenEdit={(item) => {
+              setSelectedUserId(item.id);
+              setModalOpen(true);
+            }}
+            remove={handleOpenDelete}
+          />
+        )}
+      </div>
 
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="email@dominio.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      <AdminUserUpsertModal
+        open={modalOpen}
+        adminUserId={selectedUserId}
+        isSaving={createMutation.isPending || updateMutation.isPending}
+        onOpenChange={(open) => {
+          setModalOpen(open);
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Senha</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="******" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          if (!open) {
+            setSelectedUserId(null);
+          }
+        }}
+        onCreate={(payload) => {
+          createMutation.mutate(payload, {
+            onSuccess: () => {
+              toast.success("Administrador criado com sucesso.");
+              setModalOpen(false);
+              setSelectedUserId(null);
+            },
+            onError: () => {
+              toast.error("Não foi possível criar o administrador.");
+            },
+          });
+        }}
+        onUpdate={(id, payload) => {
+          updateMutation.mutate(
+            {
+              id,
+              payload,
+            },
+            {
+              onSuccess: () => {
+                toast.success("Administrador atualizado com sucesso.");
+                setModalOpen(false);
+                setSelectedUserId(null);
+              },
+              onError: () => {
+                toast.error("Não foi possível atualizar o administrador.");
+              },
+            },
+          );
+        }}
+      />
 
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Perfil</FormLabel>
-                    <FormControl>
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o perfil" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="author">Autor</SelectItem>
-                          <SelectItem value="reader">Leitor</SelectItem>
-                          <SelectItem value="super_admin">Super Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="isActive"
-                render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel className="flex items-center gap-2">
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={(checked) => field.onChange(Boolean(checked))}
-                      />
-                      Ativo
-                    </FormLabel>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit" className="md:col-span-2" disabled={createMutation.isPending}>
-                {createMutation.isPending ? "Criando..." : "Criar usuário"}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-
-      <Card className="border-gold/15 bg-obsidian/70 shadow-panel">
-        <CardHeader>
-          <CardTitle>Usuários cadastrados</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <p className="text-sm text-quill font-ui">Carregando...</p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Ativo</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data?.items.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>{item.email}</TableCell>
-                    <TableCell>{item.role}</TableCell>
-                    <TableCell>{item.isActive ? "Sim" : "Não"}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      <ConfirmDialog
+        open={!!userToDelete}
+        onOpenChange={(open) => {
+          if (!open) {
+            setUserToDelete(null);
+          }
+        }}
+        title="Excluir administrador"
+        description={
+          <>
+            Tem certeza que deseja excluir o administrador <strong>{userToDelete?.name}</strong>?
+            <br />
+            Esta ação não poderá ser desfeita.
+          </>
+        }
+        onConfirm={handleDelete}
+        loading={false}
+        confirmText="Excluir"
+        variant="destructive"
+      />
     </div>
   );
 }

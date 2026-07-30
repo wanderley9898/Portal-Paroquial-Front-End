@@ -1,8 +1,8 @@
 import { getToken } from "@/auth/session";
-import type { AuthUser } from "@/auth/types";
 import { ENDPOINTS } from "@/constants/endpoints";
 import { BASE_API_URL } from "@/constants/envs";
 import { apiRequest } from "@/services/api.service";
+import { AuthUser } from "../types";
 
 export type UpdateProfilePayload = {
   name?: string;
@@ -34,16 +34,13 @@ export const userService = {
     const formData = new FormData();
     formData.append("avatar", file);
 
-    const response = await fetch(
-      `${BASE_API_URL}${ENDPOINTS.users.updateLogo}`,
-      {
-        method: "PATCH",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: formData,
+    const response = await fetch(`${BASE_API_URL}${ENDPOINTS.users.updateLogo}`, {
+      method: "PATCH",
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-    );
+      body: formData,
+    });
 
     if (!response.ok) {
       const text = await response.text();

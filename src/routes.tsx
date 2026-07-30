@@ -16,8 +16,8 @@ const LoginPage = lazy(() =>
 );
 
 const AdminUsersPage = lazy(() =>
-  import("./pages/admin/users").then((module) => ({
-    default: module.AdminUsersPage,
+  import("./pages/admin/users/index").then((module) => ({
+    default: module.default,
   })),
 );
 const AdminNewsPage = lazy(() =>
@@ -37,8 +37,8 @@ const AccountSettingsPage = lazy(() =>
   })),
 );
 const AdminDashboardPage = lazy(() =>
-  import("./pages/admin/users").then((module) => ({
-    default: module.AdminUsersPage,
+  import("./pages/admin/news/news").then((module) => ({
+    default: module.default,
   })),
 );
 const NewsPage = lazy(() =>
