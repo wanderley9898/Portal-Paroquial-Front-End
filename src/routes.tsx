@@ -58,6 +58,12 @@ const BroadcastsPage = lazy(() =>
   })),
 );
 
+const BiblePage = lazy(() =>
+  import("./pages/bible").then((module) => ({
+    default: module.default,
+  })),
+);
+
 function RouteFallback() {
   return (
     <div className="mx-auto flex min-h-[36vh] w-full max-w-3xl items-center justify-center px-4">
@@ -165,16 +171,8 @@ export const router = createBrowserRouter([
         element: withSuspense(<BroadcastsPage />),
       },
       {
-        path: ROUTES.public.channel,
-        element: withSuspense(<PublicHomePage />),
-      },
-      {
-        path: ROUTES.public.radio,
-        element: withSuspense(<PublicHomePage />),
-      },
-      {
-        path: ROUTES.public.documents,
-        element: withSuspense(<PublicHomePage />),
+        path: ROUTES.public.bible,
+        element: withSuspense(<BiblePage />),
       },
 
       {

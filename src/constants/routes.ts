@@ -8,13 +8,7 @@ export const ROUTES = {
     events: "/eventos",
     eventsDetailPattern: "/eventos/:id",
     broadcasts: "/transmissoes",
-    channel: "/canal",
-    radio: "/radio",
-    documents: "/documentos",
-    contact: "/contato",
-    terms: "/termos-de-uso",
-    privacy: "/politica-de-privacidade",
-    cookies: "/politica-de-cookies",
+    bible: "/biblia",
   },
 
   panel: {
