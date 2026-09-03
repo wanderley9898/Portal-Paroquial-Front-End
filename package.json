@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "serve": "serve -s dist -p 4902"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
