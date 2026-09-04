@@ -1,11 +1,11 @@
 import { useNewsPublicListQuery } from "@/common/queries/news.query";
 import { Button } from "@/components/ui/button";
+import { TITLE } from "@/constants/envs";
 import { listItems } from "@/lib/mock/store";
-import { CalendarDays, Youtube } from "lucide-react";
+import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FeaturedNewsCard } from "../news/components/featured-news-card";
 import { NewsCard } from "../news/components/news-card";
-import { TITLE } from "@/constants/envs";
 
 export function PublicHomePage() {
   const { data: newsData, isLoading } = useNewsPublicListQuery({
@@ -59,17 +59,6 @@ export function PublicHomePage() {
               <Link to="/transmissoes">
                 <Youtube className="mr-2 h-4 w-4" />
                 Assistir ao vivo
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-gold bg-transparent text-primary-foreground hover:bg-gold/10"
-            >
-              <Link to="/eventos">
-                <CalendarDays className="mr-2 h-4 w-4" />
-                Ver agenda
               </Link>
             </Button>
           </div>
