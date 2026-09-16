@@ -37,6 +37,11 @@ const adminNavItems = [
     to: ROUTES.panel.adminBroadcasts,
     icon: Radio,
   },
+  {
+    label: "Eventos",
+    to: ROUTES.panel.adminEvents,
+    icon: Settings,
+  },
 ];
 
 export function AdminSidebar() {

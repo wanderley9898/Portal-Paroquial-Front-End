@@ -21,7 +21,7 @@ const AdminUsersPage = lazy(() =>
   })),
 );
 const AdminNewsPage = lazy(() =>
-  import("./pages/admin/news/news").then((module) => ({
+  import("./pages/admin/news/index").then((module) => ({
     default: module.default,
   })),
 );
@@ -31,13 +31,20 @@ const AdminBroadcastsPage = lazy(() =>
     default: module.default,
   })),
 );
+
+const AdminEventsPage = lazy(() =>
+  import("./pages/admin/parish-events").then((module) => ({
+    default: module.default,
+  })),
+);
+
 const AccountSettingsPage = lazy(() =>
   import("./pages/account-settings").then((module) => ({
     default: module.AccountSettingsPage,
   })),
 );
 const AdminDashboardPage = lazy(() =>
-  import("./pages/admin/news/news").then((module) => ({
+  import("./pages/admin/news/").then((module) => ({
     default: module.default,
   })),
 );
@@ -202,19 +209,11 @@ export const router = createBrowserRouter([
           },
           {
             path: ROUTES.panel.adminEvents,
-            element: withSuspense(<AdminUsersPage />),
+            element: withSuspense(<AdminEventsPage />),
           },
           {
             path: ROUTES.panel.adminBroadcasts,
             element: withSuspense(<AdminBroadcastsPage />),
-          },
-          {
-            path: ROUTES.panel.adminRadio,
-            element: withSuspense(<AdminUsersPage />),
-          },
-          {
-            path: ROUTES.panel.adminDocuments,
-            element: withSuspense(<AdminUsersPage />),
           },
         ],
       },

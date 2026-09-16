@@ -1,0 +1,68 @@
+import { ParishEventUpsertFormData } from "@/common/validations/parish-event.schema";
+import { ENDPOINTS } from "@/constants/endpoints";
+import { ISearchParishEvent, ParishEvent, SearchResult } from "@/lib/types";
+import { apiRequest } from "@/services/api.service";
+
+/**
+ * ===== Payloads =====
+ */
+
+export type CreateParishEventPayload = ParishEventUpsertFormData;
+
+export type UpdateParishEventPayload = Partial<CreateParishEventPayload>;
+
+/**
+ * ===== Service
+ */
+
+export const parishEventService = {
+  async getByIdPublic(id: string): Promise<ParishEvent> {
+    return apiRequest<ParishEvent>(ENDPOINTS.parishEvents.getByIdPublic(id));
+  },
+
+  async listPublic(search: ISearchParishEvent): Promise<SearchResult<ParishEvent[]>> {
+    return apiRequest<SearchResult<ParishEvent[]>>(ENDPOINTS.parishEvents.listPublic, {
+      method: "GET",
+      params: {
+        page: search.page,
+        per_page: search.per_page,
+        filter: search.filter,
+      },
+    });
+  },
+
+  async getById(id: string): Promise<ParishEvent> {
+    return apiRequest<ParishEvent>(ENDPOINTS.parishEvents.getById(id));
+  },
+
+  async list(search: ISearchParishEvent): Promise<SearchResult<ParishEvent[]>> {
+    return apiRequest<SearchResult<ParishEvent[]>>(ENDPOINTS.parishEvents.list, {
+      method: "GET",
+      params: {
+        page: search.page,
+        per_page: search.per_page,
+        filter: search.filter,
+      },
+    });
+  },
+
+  async create(payload: CreateParishEventPayload): Promise<ParishEvent> {
+    return apiRequest<ParishEvent>(ENDPOINTS.parishEvents.create, {
+      method: "POST",
+      body: payload,
+    });
+  },
+
+  async update(id: string, payload: UpdateParishEventPayload): Promise<ParishEvent> {
+    return apiRequest<ParishEvent>(ENDPOINTS.parishEvents.update(id), {
+      method: "PUT",
+      body: payload,
+    });
+  },
+
+  async remove(id: string): Promise<void> {
+    await apiRequest<void>(ENDPOINTS.parishEvents.delete(id), {
+      method: "DELETE",
+    });
+  },
+};

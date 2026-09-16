@@ -116,3 +116,27 @@ export interface ISearchBroadcastFilter {
 }
 
 export interface ISearchBroadcast extends Search<ISearchBroadcastFilter> {}
+
+// Parish Events
+export interface ParishEvent extends IBaseEntityWithUUID {
+  id: string;
+  name: string;
+  description: string;
+  date: string;
+  time: string;
+  endTime?: string;
+  location: string;
+  responsible: string;
+  category: NewsCategoryEnum;
+  image?: string;
+  views: number;
+}
+
+export interface ISearchParishEventFilter {
+  q?: string;
+  category?: NewsCategoryEnum;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+export interface ISearchParishEvent extends Search<ISearchParishEventFilter> {}

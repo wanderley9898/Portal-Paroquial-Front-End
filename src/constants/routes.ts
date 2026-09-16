@@ -19,7 +19,5 @@ export const ROUTES = {
     adminNews: "/admin/noticias",
     adminEvents: "/admin/eventos",
     adminBroadcasts: "/admin/transmissoes",
-    adminRadio: "/admin/radio",
-    adminDocuments: "/admin/documentos",
   },
 } as const;
