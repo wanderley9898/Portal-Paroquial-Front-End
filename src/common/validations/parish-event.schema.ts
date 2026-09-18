@@ -28,7 +28,7 @@ export const parishEventUpsertSchema = z.object({
     invalid_type_error: "Categoria inválida",
   }),
 
-  image: z.string().optional().or(z.literal("")),
+  image: z.union([z.string(), z.instanceof(File)]).optional(),
 });
 
 export type ParishEventUpsertFormData = z.infer<typeof parishEventUpsertSchema>;

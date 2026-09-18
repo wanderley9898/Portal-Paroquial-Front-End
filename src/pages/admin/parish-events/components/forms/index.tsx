@@ -1,6 +1,7 @@
 import { useFormContext } from "react-hook-form";
 
 import { ParishEventUpsertFormData } from "@/common/validations/parish-event.schema";
+import { ImageSourceInput } from "@/components/custom/image-source-input";
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
@@ -199,10 +200,12 @@ export const ParishEventForm = () => {
           name="image"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Imagem do evento</FormLabel>
-
               <FormControl>
-                <Input {...field} value={field.value ?? ""} placeholder="https://..." />
+                <ImageSourceInput
+                  label="Imagem do evento"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
               </FormControl>
 
               <FormMessage />

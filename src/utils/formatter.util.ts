@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const formatDisplayDate = (value?: string) => {
   if (!value) return "Selecionar data";
@@ -6,10 +7,25 @@ const formatDisplayDate = (value?: string) => {
   return format(new Date(value), "dd/MM/yyyy");
 };
 
+const formatFullDate = (value?: string) => {
+  if (!value) return "-";
+
+  const [year, month, day] = value.split("-").map(Number);
+
+  if (!year || !month || !day) return value;
+
+  const date = new Date(year, month - 1, day);
+
+  return format(date, "EEEE, dd 'de' MMMM 'de' yyyy", {
+    locale: ptBR,
+  });
+};
+
 const parseFilterDate = (value?: string) => {
   if (!value) return undefined;
 
   const date = new Date(value);
+
   return Number.isNaN(date.getTime()) ? undefined : date;
 };
 
@@ -37,6 +53,7 @@ const formatter = {
   formatDateFilter,
   formatDateTimeLocal,
   formatDisplayDate,
+  formatFullDate,
   parseFilterDate,
 };
 

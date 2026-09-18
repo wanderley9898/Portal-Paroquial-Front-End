@@ -1,6 +1,7 @@
 import { useFormContext } from "react-hook-form";
 
 import { NewsUpsertFormData } from "@/common/validations/news.schema";
+import { ImageSourceInput } from "@/components/custom/image-source-input";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -151,10 +152,12 @@ export const NewsForm = () => {
             name="coverImage"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Imagem de capa</FormLabel>
-
                 <FormControl>
-                  <Input {...field} value={field.value ?? ""} placeholder="https://..." />
+                  <ImageSourceInput
+                    label="Imagem de capa"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
 
                 <FormMessage />
@@ -167,10 +170,12 @@ export const NewsForm = () => {
             name="thumbnail"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Miniatura</FormLabel>
-
                 <FormControl>
-                  <Input {...field} value={field.value ?? ""} placeholder="https://..." />
+                  <ImageSourceInput
+                    label="Miniatura"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
 
                 <FormMessage />

@@ -11,6 +11,27 @@ export type CreateParishEventPayload = ParishEventUpsertFormData;
 
 export type UpdateParishEventPayload = Partial<CreateParishEventPayload>;
 
+function hasImageFile(payload: CreateParishEventPayload | UpdateParishEventPayload) {
+  return payload.image instanceof File;
+}
+
+function toParishEventFormData(payload: CreateParishEventPayload | UpdateParishEventPayload) {
+  const formData = new FormData();
+
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return;
+
+    if (value instanceof File) {
+      formData.append(key, value);
+      return;
+    }
+
+    formData.append(key, String(value));
+  });
+
+  return formData;
+}
+
 /**
  * ===== Service
  */
@@ -49,14 +70,14 @@ export const parishEventService = {
   async create(payload: CreateParishEventPayload): Promise<ParishEvent> {
     return apiRequest<ParishEvent>(ENDPOINTS.parishEvents.create, {
       method: "POST",
-      body: payload,
+      body: hasImageFile(payload) ? toParishEventFormData(payload) : payload,
     });
   },
 
   async update(id: string, payload: UpdateParishEventPayload): Promise<ParishEvent> {
     return apiRequest<ParishEvent>(ENDPOINTS.parishEvents.update(id), {
       method: "PUT",
-      body: payload,
+      body: hasImageFile(payload) ? toParishEventFormData(payload) : payload,
     });
   },
 

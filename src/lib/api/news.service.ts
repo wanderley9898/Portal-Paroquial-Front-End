@@ -11,6 +11,27 @@ export type CreateNewsPayload = NewsUpsertFormData;
 
 export type UpdateNewsPayload = Partial<CreateNewsPayload>;
 
+function hasImageFile(payload: CreateNewsPayload | UpdateNewsPayload) {
+  return payload.coverImage instanceof File || payload.thumbnail instanceof File;
+}
+
+function toNewsFormData(payload: CreateNewsPayload | UpdateNewsPayload) {
+  const formData = new FormData();
+
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return;
+
+    if (value instanceof File) {
+      formData.append(key, value);
+      return;
+    }
+
+    formData.append(key, Array.isArray(value) ? JSON.stringify(value) : String(value));
+  });
+
+  return formData;
+}
+
 /**
  * ===== Service
  */
@@ -49,14 +70,14 @@ export const newsService = {
   async create(payload: CreateNewsPayload): Promise<News> {
     return apiRequest<News>(ENDPOINTS.news.create, {
       method: "POST",
-      body: payload,
+      body: hasImageFile(payload) ? toNewsFormData(payload) : payload,
     });
   },
 
   async update(id: string, payload: UpdateNewsPayload): Promise<News> {
     return apiRequest<News>(ENDPOINTS.news.update(id), {
       method: "PUT",
-      body: payload,
+      body: hasImageFile(payload) ? toNewsFormData(payload) : payload,
     });
   },
 

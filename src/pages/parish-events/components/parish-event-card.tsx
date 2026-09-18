@@ -69,7 +69,7 @@ export function ParishEventCard({
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
             <div className="flex items-center gap-1">
               <CalendarDays className="h-3.5 w-3.5" />
-              {formatter.formatDateTimeLocal(event.date)}
+              {formatter.formatFullDate(event.date)}
             </div>
 
             <div className="flex items-center gap-1">
@@ -81,13 +81,13 @@ export function ParishEventCard({
 
             <div className="flex items-center gap-1">
               <MapPin className="h-3.5 w-3.5" />
-              <span className="max-w-[180px] truncate">{event.location}</span>
+              <span className="max-w-45 truncate">{event.location}</span>
             </div>
 
             {showResponsible && (
               <div className="flex items-center gap-1">
                 <User className="h-3.5 w-3.5" />
-                <span className="max-w-[160px] truncate">{event.responsible}</span>
+                <span className="max-w-40 truncate">{event.responsible}</span>
               </div>
             )}
 

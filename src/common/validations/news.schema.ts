@@ -9,9 +9,9 @@ export const newsUpsertSchema = z.object({
 
   content: z.string().min(10, "Conteúdo obrigatório"),
 
-  coverImage: z.string().optional(),
+  coverImage: z.union([z.string(), z.instanceof(File)]).optional(),
 
-  thumbnail: z.string().optional(),
+  thumbnail: z.union([z.string(), z.instanceof(File)]).optional(),
 
   category: z.nativeEnum(NewsCategoryEnum, {
     invalid_type_error: "Categoria inválida",
