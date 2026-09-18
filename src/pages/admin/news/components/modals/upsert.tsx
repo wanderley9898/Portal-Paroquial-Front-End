@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { NewsCategoryEnum } from "@/utils/enums";
-import { formatDateTimeLocal } from "@/utils/formatter.util";
+import { formatter } from "@/utils/formatter.util";
 
 interface NewsUpsertModalProps {
   open: boolean;
@@ -54,8 +54,8 @@ function mapNewsToFormValues(news: unknown): NewsUpsertFormData {
     category: (source.category as NewsCategoryEnum) ?? NewsCategoryEnum.NEWS,
     featured: Boolean(source.featured),
     published: Boolean(source.published),
-    publishedAt: formatDateTimeLocal(source.publishedAt as string),
-    expiresAt: formatDateTimeLocal(source.expiresAt as string),
+    publishedAt: formatter.formatDateTimeLocal(source.publishedAt as string),
+    expiresAt: formatter.formatDateTimeLocal(source.expiresAt as string),
     youtubeUrl: String(source.youtubeUrl ?? ""),
     externalUrl: String(source.externalUrl ?? ""),
     tags: Array.isArray(source.tags) ? (source.tags as string[]) : [],

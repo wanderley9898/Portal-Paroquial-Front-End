@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { News, NewsCategoryLabels } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { formatDisplayDate } from "@/utils/formatter.util";
+import { formatter } from "@/utils/formatter.util";
 
 interface NewsCardProps {
   news: News;
@@ -76,7 +76,7 @@ export function NewsCard({
             {news.publishedAt && (
               <div className="flex items-center gap-1">
                 <CalendarDays className="h-3.5 w-3.5" />
-                {formatDisplayDate(news.publishedAt)}
+                {formatter.formatDisplayDate(news.publishedAt)}
               </div>
             )}
 

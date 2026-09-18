@@ -17,7 +17,7 @@ import {
 import { ISearchBroadcast } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { BroadcastStatusEnum, BroadcastStatusLabels } from "@/utils/enums";
-import { formatDisplayDate, parseFilterDate } from "@/utils/formatter.util";
+import { formatter } from "@/utils/formatter.util";
 
 interface SearchBroadcastProps {
   filters?: ISearchBroadcast;
@@ -268,7 +268,7 @@ interface DateFilterButtonProps {
 }
 
 function DateFilterButton({ value, onChange }: DateFilterButtonProps) {
-  const date = parseFilterDate(value);
+  const date = formatter.parseFilterDate(value);
 
   return (
     <div className="flex gap-2">
@@ -283,7 +283,7 @@ function DateFilterButton({ value, onChange }: DateFilterButtonProps) {
             )}
           >
             <CalendarIcon className="h-4 w-4" />
-            {formatDisplayDate(value)}
+            {formatter.formatDisplayDate(value)}
           </Button>
         </PopoverTrigger>
 

@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 import { NewsCategoryEnum, NewsCategoryLabels } from "@/utils/enums";
 
-import { formatDateFilter, formatDisplayDate, parseFilterDate } from "@/utils/formatter.util";
+import { formatter } from "@/utils/formatter.util";
 
 interface SearchParishEventProps {
   filters?: ISearchParishEvent;
@@ -147,7 +147,7 @@ export const SearchParishEvent = ({ filters, setFilters }: SearchParishEventProp
             value={filters?.filter?.dateFrom}
             onChange={(date) =>
               updateFilter({
-                dateFrom: date ? formatDateFilter(date) : undefined,
+                dateFrom: date ? formatter.formatDateFilter(date) : undefined,
               })
             }
           />
@@ -161,7 +161,7 @@ export const SearchParishEvent = ({ filters, setFilters }: SearchParishEventProp
             value={filters?.filter?.dateTo}
             onChange={(date) =>
               updateFilter({
-                dateTo: date ? formatDateFilter(date) : undefined,
+                dateTo: date ? formatter.formatDateFilter(date) : undefined,
               })
             }
           />
@@ -197,7 +197,7 @@ interface DateFilterButtonProps {
 }
 
 function DateFilterButton({ value, onChange }: DateFilterButtonProps) {
-  const date = parseFilterDate(value);
+  const date = formatter.parseFilterDate(value);
 
   return (
     <div className="flex gap-2">
@@ -213,7 +213,7 @@ function DateFilterButton({ value, onChange }: DateFilterButtonProps) {
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
 
-            {formatDisplayDate(value)}
+            {formatter.formatDisplayDate(value)}
           </Button>
         </PopoverTrigger>
 

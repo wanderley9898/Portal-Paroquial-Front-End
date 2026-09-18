@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { BroadcastStatusEnum } from "@/utils/enums";
-import { formatDateTimeLocal } from "@/utils/formatter.util";
+import { formatter } from "@/utils/formatter.util";
 
 interface BroadcastUpsertModalProps {
   open: boolean;
@@ -49,7 +49,7 @@ function mapBroadcastToFormValues(broadcast: unknown): BroadcastUpsertFormData {
     youtubeUrl: String(source.youtubeUrl ?? ""),
     thumbnail: String(source.thumbnail ?? ""),
     status: (source.status as BroadcastStatusEnum) ?? BroadcastStatusEnum.UPCOMING,
-    scheduledAt: formatDateTimeLocal(source.scheduledAt as string),
+    scheduledAt: formatter.formatDateTimeLocal(source.scheduledAt as string),
     featured: Boolean(source.featured),
     published: Boolean(source.published),
   };

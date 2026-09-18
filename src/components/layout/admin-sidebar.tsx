@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import {
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
@@ -40,7 +41,7 @@ const adminNavItems = [
   {
     label: "Eventos",
     to: ROUTES.panel.adminEvents,
-    icon: Settings,
+    icon: CalendarDays,
   },
 ];
 

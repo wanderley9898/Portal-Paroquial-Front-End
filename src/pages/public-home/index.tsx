@@ -1,8 +1,9 @@
 import { useNewsPublicListQuery } from "@/common/queries/news.query";
+import { useParishEventPublicListQuery } from "@/common/queries/parish-event.query";
 import { Button } from "@/components/ui/button";
 import { TITLE } from "@/constants/envs";
 import { listItems } from "@/lib/mock/store";
-import { Youtube } from "lucide-react";
+import { CalendarDays, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FeaturedNewsCard } from "../news/components/featured-news-card";
 import { NewsCard } from "../news/components/news-card";
@@ -16,7 +17,7 @@ export function PublicHomePage() {
       onlyVisible: true,
     },
   });
-  const { data: featuredNews, isLoading: featuredNewsLoading } = useNewsPublicListQuery({
+  const { data: featuredNews } = useNewsPublicListQuery({
     page: 1,
     per_page: 1,
     filter: {
@@ -29,10 +30,19 @@ export function PublicHomePage() {
   const featured = featuredNews?.items[0] ?? null;
   const latest = newsData?.items.filter((n) => n.id !== featured?.id).slice(0, 6) ?? [];
 
-  const events = listItems("events")
-    .filter((e) => new Date(e.date) >= new Date(Date.now() - 86400000))
-    .sort((a, b) => +new Date(a.date) - +new Date(b.date))
+  const { data: eventsData } = useParishEventPublicListQuery({
+    page: 1,
+    per_page: 4,
+    filter: {},
+  });
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const events = (eventsData?.items ?? [])
+    .filter((event) => new Date(event.date) >= today)
+    .sort((first, second) => +new Date(first.date) - +new Date(second.date))
     .slice(0, 4);
+
   const upcomingBroadcast = listItems("broadcasts").find((b) => b.status === "upcoming");
 
   return (
@@ -59,6 +69,17 @@ export function PublicHomePage() {
               <Link to="/transmissoes">
                 <Youtube className="mr-2 h-4 w-4" />
                 Assistir ao vivo
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-gold bg-transparent text-primary-foreground hover:bg-gold/10"
+            >
+              <Link to="/eventos">
+                <CalendarDays className="mr-2 h-4 w-4" />
+                Ver agenda
               </Link>
             </Button>
           </div>
@@ -93,7 +114,7 @@ export function PublicHomePage() {
       {/* Latest news + upcoming events */}
       <section className="border-y border-border/60 bg-parchment">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-3">
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-2">
             <SectionTitle title="Últimas notícias" href="/noticias" />
 
             <div className="mt-6 grid gap-6 sm:grid-cols-3">
@@ -105,7 +126,7 @@ export function PublicHomePage() {
             </div>
           </div>
 
-          {/*} <div>
+          <div>
             <SectionTitle title="Próximos eventos" href="/eventos" />
             <ul className="mt-6 space-y-4">
               {events.map((e) => {
@@ -133,41 +154,9 @@ export function PublicHomePage() {
                 );
               })}
             </ul>
-          </div>*/}
+          </div>
         </div>
       </section>
-
-      {/* Rádio / Canal callouts */}
-      {/*} <section className="mx-auto grid max-w-6xl gap-6 px-4 py-16 md:grid-cols-2">
-        <Link
-          to="/radio"
-          className="group flex items-center gap-6 rounded border border-border bg-card p-6 transition hover:border-gold"
-        >
-          <div className="flex h-16 w-16 flex-none items-center justify-center rounded-full border border-gold bg-primary text-primary-foreground">
-            <Radio className="h-7 w-7" />
-          </div>
-          <div>
-            <h3 className="font-serif text-2xl text-primary">Rádio da Paróquia</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Programação de oração, formação e música católica ao vivo.
-            </p>
-          </div>
-        </Link>
-        <Link
-          to="/canal"
-          className="group flex items-center gap-6 rounded border border-border bg-card p-6 transition hover:border-gold"
-        >
-          <div className="flex h-16 w-16 flex-none items-center justify-center rounded-full border border-gold bg-primary text-primary-foreground">
-            <Youtube className="h-7 w-7" />
-          </div>
-          <div>
-            <h3 className="font-serif text-2xl text-primary">Canal no YouTube</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Últimos vídeos, transmissões e playlists da nossa comunidade.
-            </p>
-          </div>
-        </Link>
-      </section>*/}
     </div>
   );
 }

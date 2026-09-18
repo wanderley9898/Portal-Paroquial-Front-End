@@ -1,5 +1,6 @@
 import {
   Book,
+  CalendarDays,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -132,6 +133,15 @@ export function SiteHeader() {
               </Link>
 
               <Link
+                to={ROUTES.public.events}
+                onClick={handleMobileNavigate}
+                className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
+              >
+                <CalendarDays className="h-4 w-4" />
+                Eventos
+              </Link>
+
+              <Link
                 to={ROUTES.public.broadcasts}
                 onClick={handleMobileNavigate}
                 className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
@@ -187,6 +197,13 @@ export function SiteHeader() {
           >
             <Newspaper className="h-4 w-4" />
             Notícias
+          </Link>
+          <Link
+            to={ROUTES.public.events}
+            className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
+          >
+            <CalendarDays className="h-4 w-4" />
+            Eventos
           </Link>
           <Link
             to={ROUTES.public.broadcasts}

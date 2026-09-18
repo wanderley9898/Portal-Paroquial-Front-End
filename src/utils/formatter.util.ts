@@ -33,4 +33,11 @@ function formatDateFilter(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-export { formatDateFilter, formatDateTimeLocal, formatDisplayDate, parseFilterDate };
+const formatter = {
+  formatDateFilter,
+  formatDateTimeLocal,
+  formatDisplayDate,
+  parseFilterDate,
+};
+
+export { formatter };

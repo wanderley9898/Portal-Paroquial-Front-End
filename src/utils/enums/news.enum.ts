@@ -31,3 +31,15 @@ export const NewsCategoryLabels: Record<NewsCategoryEnum, string> = {
   [NewsCategoryEnum.FORMATION]: "Formação",
   [NewsCategoryEnum.OTHER]: "Outro",
 };
+
+const eventCategoryOptions = [
+  NewsCategoryEnum.EVENT,
+  NewsCategoryEnum.NOVENA,
+  NewsCategoryEnum.MASS,
+  NewsCategoryEnum.COMMUNITY,
+  NewsCategoryEnum.CAMPAIGN,
+  NewsCategoryEnum.OTHER,
+];
+
+export const isEventCategory = (category: NewsCategoryEnum) =>
+  eventCategoryOptions.includes(category);

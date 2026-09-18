@@ -58,6 +58,16 @@ const NewsDetailPage = lazy(() =>
     default: module.default,
   })),
 );
+const ParishEventsPage = lazy(() =>
+  import("./pages/parish-events").then((module) => ({
+    default: module.default,
+  })),
+);
+const ParishEventDetailPage = lazy(() =>
+  import("./pages/parish-events/view").then((module) => ({
+    default: module.default,
+  })),
+);
 
 const BroadcastsPage = lazy(() =>
   import("./pages/broadcasts").then((module) => ({
@@ -167,11 +177,11 @@ export const router = createBrowserRouter([
       },
       {
         path: ROUTES.public.events,
-        element: withSuspense(<PublicHomePage />),
+        element: withSuspense(<ParishEventsPage />),
       },
       {
         path: ROUTES.public.eventsDetailPattern,
-        element: withSuspense(<PublicHomePage />),
+        element: withSuspense(<ParishEventDetailPage />),
       },
       {
         path: ROUTES.public.broadcasts,
