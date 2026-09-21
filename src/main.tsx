@@ -4,10 +4,13 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./auth/auth-provider";
 import { Toaster } from "./components/ui/sonner";
+import { applyTheme } from "./constants/theme.config";
 import { router } from "./routes";
 import "./styles.css";
 
 const queryClient = new QueryClient();
+
+applyTheme();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

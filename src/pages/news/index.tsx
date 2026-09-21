@@ -74,11 +74,29 @@ export default function NewsList() {
           </Select>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {news.map((item) => (
-            <NewsCard key={item.id} news={item} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div
+            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+            aria-label="Carregando notícias"
+          >
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="h-72 animate-pulse rounded-xl bg-muted" />
+            ))}
+          </div>
+        ) : news.length === 0 ? (
+          <div className="rounded-xl border border-dashed bg-card px-6 py-16 text-center">
+            <h2 className="font-serif text-xl font-semibold">Nenhuma notícia encontrada</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Tente ajustar os filtros para encontrar outras publicações.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {news.map((item) => (
+              <NewsCard key={item.id} news={item} />
+            ))}
+          </div>
+        )}
         {data && (
           <PaginationCustom
             currentPage={data.currentPage}

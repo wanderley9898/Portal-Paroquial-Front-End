@@ -55,14 +55,16 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center gap-6 px-6 py-2">
+      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
         <Link to={ROUTES.public.home} className="flex items-center gap-3">
           <img
             src={LOGO_URL}
             alt={TITLE}
-            className="h-10 w-10 rounded-full border border-gold object-cover"
+            className="h-10 w-10 rounded-full border-2 border-primary/20 object-cover shadow-sm"
           />
-          <span className="font-display text-xl tracking-wide text-gold">{TITLE}</span>
+          <span className="max-w-[12rem] truncate font-display text-xl tracking-wide text-primary sm:max-w-none">
+            {TITLE}
+          </span>
         </Link>
 
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -190,7 +192,10 @@ export function SiteHeader() {
           </SheetContent>
         </Sheet>
 
-        <nav className="ml-auto hidden items-center gap-2 font-sans text-sm text-muted-foreground md:flex">
+        <nav
+          className="ml-auto hidden items-center gap-1 font-sans text-sm text-muted-foreground md:flex"
+          aria-label="Navegação principal"
+        >
           <Link
             to={ROUTES.public.news}
             className="flex items-center gap-2 rounded px-3 py-2 hover:bg-card"
@@ -287,18 +292,18 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="border-t border-border/60">
-      <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-2 md:flex-row md:items-center">
+      <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-8 sm:px-6 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
           <img
             src={LOGO_URL}
             alt={TITLE}
-            className="h-9 w-9 rounded-full border border-gold object-cover"
+            className="h-9 w-9 rounded-full border border-primary/20 object-cover"
           />
 
-          <span className="font-display text-base text-gold">{TITLE}</span>
+          <span className="font-display text-base text-primary">{TITLE}</span>
         </div>
 
-        <nav className="md:ml-auto">
+        <nav>
           <ul className="flex flex-wrap items-end justify-end gap-5 text-sm text-muted-foreground md:justify-end">
             <li>
               <Link to={ROUTES.public.news} className="hover:text-foreground">
@@ -341,7 +346,7 @@ export function PageHeader({
 }) {
   return (
     <div className={cn("border-b border-border/60 bg-parchment", className)}>
-      <div className="mx-auto max-w-6xl px-4 py-12 text-center">
+      <div className="mx-auto max-w-6xl px-4 py-14 text-center sm:py-16">
         <div className="gold-divider mx-auto mb-4 w-20" />
         {eyebrow && <p className="text-xs uppercase tracking-[0.3em] text-gold">{eyebrow}</p>}
         <h1 className="mt-3 font-serif text-4xl text-primary sm:text-5xl">{title}</h1>
@@ -360,5 +365,7 @@ export function PageContainer({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={cn("mx-auto max-w-6xl px-4 py-12", className)}>{children}</div>;
+  return (
+    <div className={cn("mx-auto w-full max-w-6xl px-4 py-10 sm:py-12", className)}>{children}</div>
+  );
 }

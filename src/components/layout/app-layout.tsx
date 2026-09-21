@@ -4,17 +4,17 @@ import { SiteFooter, SiteHeader } from "./site-header";
 
 export function AppLayout() {
   return (
-    <div className="flex h-screen bg-background text-foreground overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-background text-foreground">
       <AdminSidebar />
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="shrink-0 border-b bg-background">
+        <header className="shrink-0 border-b border-border/70 bg-background/95">
           <SiteHeader />
         </header>
 
         <main className="flex-1 overflow-y-auto">
           <div className="flex min-h-full flex-col">
-            <div className="flex-1 ">
+            <div className="min-w-0 flex-1">
               <Outlet />
             </div>
 

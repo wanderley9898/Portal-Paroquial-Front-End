@@ -64,14 +64,14 @@ export function AdminSidebar() {
   return (
     <aside
       className={cn(
-        "relative hidden h-screen shrink-0 border-r bg-card transition-all duration-300 sm:flex sm:flex-col",
-        collapsed ? "lg:w-12" : "lg:w-44",
+        "relative hidden h-screen shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-all duration-300 sm:flex sm:flex-col",
+        collapsed ? "w-16" : "w-64",
       )}
     >
-      <div className="flex items-center justify-between border-b p-4">
+      <div className="flex items-center justify-between border-b border-sidebar-border p-4">
         {!collapsed && (
           <div>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-gold">Portal</p>
+            <p className="text-[11px] uppercase tracking-[0.3em] text-sidebar-primary">Portal</p>
 
             <h2 className="text-xl font-semibold">Painel paroquial</h2>
           </div>
@@ -81,7 +81,7 @@ export function AdminSidebar() {
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </Button>
       </div>
-      <nav className="flex-1 space-y-1 p-3">
+      <nav className="flex-1 space-y-1 p-3" aria-label="Navegação administrativa">
         {adminNavItems.map(({ label, to, icon: Icon }) => (
           <NavLink
             key={to}
@@ -90,7 +90,9 @@ export function AdminSidebar() {
               cn(
                 "flex items-center rounded-lg px-3 py-2 transition-all",
                 collapsed ? "justify-center" : "gap-3",
-                isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent",
+                isActive
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
+                  : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
               )
             }
           >
@@ -100,14 +102,16 @@ export function AdminSidebar() {
           </NavLink>
         ))}
       </nav>
-      <div className="border-t p-2 pt-4 space-y-2">
+      <div className="space-y-2 border-t border-sidebar-border p-2 pt-4">
         <NavLink
           to={ROUTES.panel.accountSettings}
           className={({ isActive }) =>
             cn(
               "flex items-center rounded-lg",
               collapsed ? "justify-center" : "gap-3",
-              isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent",
+              isActive
+                ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
             )
           }
         >

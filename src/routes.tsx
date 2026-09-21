@@ -84,7 +84,7 @@ const BiblePage = lazy(() =>
 function RouteFallback() {
   return (
     <div className="mx-auto flex min-h-[36vh] w-full max-w-3xl items-center justify-center px-4">
-      <p className="font-ui text-sm tracking-wide text-quill">Carregando página...</p>
+      <p className="text-sm tracking-wide text-muted-foreground">Carregando página...</p>
     </div>
   );
 }
