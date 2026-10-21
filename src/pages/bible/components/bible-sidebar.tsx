@@ -67,12 +67,15 @@ export function BibleSidebar({
 
           h-screen
           w-80
+          overflow-y-auto
 
           transition-transform
 
           lg:sticky
           lg:top-20
           lg:h-auto
+          lg:max-h-[calc(100vh-5rem)]
+          lg:overflow-y-auto
           lg:w-auto
           lg:translate-x-0
           `,
