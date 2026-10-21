@@ -15,18 +15,6 @@ type UploadProgressOptions = {
   onUploadProgress?: (progress: number) => void;
 };
 
-function toFriendlyApiMessage(rawMessage: string) {
-  const normalized = rawMessage.trim();
-
-  const knownMessages: Record<string, string> = {
-    "Usuário ja esta vinculado a campanha.": "Esse jogador ja esta vinculado a campanha.",
-    "Ficha ja esta vinculada a campanha.": "Essa ficha ja esta vinculada a campanha.",
-    "Código de jogador nao encontrado.": "Nao encontramos esse código de jogador.",
-  };
-
-  return knownMessages[normalized] || normalized;
-}
-
 function parseApiErrorMessage(status: number, fallbackText: string) {
   const trimmedText = fallbackText.trim();
 
@@ -41,16 +29,10 @@ function parseApiErrorMessage(status: number, fallbackText: string) {
       statusCode?: number;
     };
 
-    if (Array.isArray(parsed.message) && parsed.message.length > 0) {
-      return toFriendlyApiMessage(parsed.message.join(" "));
-    }
+    if (parsed.statusCode === status) {
+      const message = parsed.error ?? parsed.message ?? "";
 
-    if (typeof parsed.message === "string" && parsed.message.trim()) {
-      return toFriendlyApiMessage(parsed.message);
-    }
-
-    if (typeof parsed.error === "string" && parsed.error.trim()) {
-      return toFriendlyApiMessage(parsed.error);
+      return Array.isArray(message) ? message.join(", ") : message;
     }
   } catch {
     // fallback to plain text below
@@ -64,7 +46,7 @@ function parseApiErrorMessage(status: number, fallbackText: string) {
     return "Não foi possível processar a solicitação.";
   }
 
-  return toFriendlyApiMessage(trimmedText);
+  return trimmedText;
 }
 
 function hasJsonResponse(response: Response) {

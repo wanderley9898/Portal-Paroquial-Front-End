@@ -19,7 +19,6 @@ export default function BibliaPage() {
   const cap = parsedCap && Number.isFinite(parsedCap) ? parsedCap : undefined;
   const q = searchParams.get("q") ?? undefined;
 
-  const [bookFilter, setBookFilter] = useState("");
   const [searchInput, setSearchInput] = useState(q ?? "");
   const [restored, setRestored] = useState(false);
 
@@ -125,7 +124,7 @@ export default function BibliaPage() {
       <PageHeader
         eyebrow="Palavra de Deus"
         title="Bíblia Sagrada"
-        description="Almeida Corrigida Fiel — navegue por livros e capítulos, pesquise versículos e continue a leitura de onde parou."
+        description="Tradução de Padre Manuel de Matos Soares — navegue por livros e capítulos, pesquise versículos e continue a leitura de onde parou."
       />
 
       <PageContainer className="grid gap-8 lg:grid-cols-[280px_1fr]">
@@ -139,6 +138,12 @@ export default function BibliaPage() {
 
         {/* Leitura */}
         <section>
+          {booksQuery.isError && (
+            <p role="alert" className="mb-4 text-sm text-destructive">
+              Não foi possível carregar a lista de livros da Bíblia.
+            </p>
+          )}
+
           <form onSubmit={submitSearch} className="mb-6 flex gap-2">
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -173,6 +178,11 @@ export default function BibliaPage() {
                     <Skeleton key={i} className="h-16 w-full" />
                   ))}
                 </div>
+              )}
+              {searchQuery.isError && (
+                <p role="alert" className="mt-4 text-sm text-destructive">
+                  Não foi possível pesquisar na Bíblia. Tente novamente.
+                </p>
               )}
               {searchQuery.data && (
                 <>
