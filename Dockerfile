@@ -1,16 +1,20 @@
-FROM node:22
-ENV TZ="America/Sao_Paulo"
+
+FROM node:22-alpine
+
+ENV TZ=America/Sao_Paulo
 
 WORKDIR /app
 
-COPY . /app
+COPY package.json yarn.lock ./
 
-RUN npm install serve -g
+RUN yarn install --frozen-lockfile
 
-RUN yarn install
+COPY . .
 
-RUN npm run build
+RUN yarn build
 
-EXPOSE 4902
+RUN yarn global add serve
 
-CMD ["npm", "run", "serve"]
+EXPOSE 4001
+
+CMD ["serve", "-s", "dist", "-l", "4001"]
